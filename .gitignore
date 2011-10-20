@@ -1,0 +1,18 @@
+.bundle
+log/*.log
+tmp/
+.sass-cache/
+.yardoc/
+.rvmrc
+
+# System/IDE files
+Desktop.ini
+Thumbs.db
+nbproject
+.DS_Store
+.idea
+.redcar
+\#*#
+*.swp
+*.swo
+smscenter-*

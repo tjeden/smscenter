@@ -1,0 +1,15 @@
+GEM
+  specs:
+    addressable (2.2.6)
+    crack (0.3.1)
+    curb (0.7.15)
+    webmock (1.7.7)
+      addressable (~> 2.2, > 2.2.5)
+      crack (>= 0.1.7)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  curb
+  webmock
