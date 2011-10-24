@@ -1,8 +1,22 @@
+*.gem
+*.rbc
 .bundle
-log/*.log
-tmp/
-.sass-cache/
-.yardoc/
+.config
+.yardoc
+Gemfile.lock
+InstalledFiles
+_yardoc
+coverage
+doc/
+lib/bundler/man
+pkg
+rdoc
+spec/reports
+test/tmp
+test/version_tmp
+tmp
+
+yardoc/
 .rvmrc
 
 # System/IDE files
@@ -15,4 +29,4 @@ nbproject
 \#*#
 *.swp
 *.swo
-smscenter-*
+*~
