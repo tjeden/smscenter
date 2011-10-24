@@ -1,16 +1,24 @@
+require 'active_support'
+require 'mobitex/errors'
+require 'mobitex/sms'
 require 'mobitex/version'
 
 module Mobitex
 
-  class Sms
-    def initialize(options = {})
-    end
+  # API address
+  mattr_accessor :api_url
+  @@api_url = 'http://api.statsms.net'
 
-    def deliver
-      c = Curl::Easy.http_post('http://api.statsms.net/send.php')
-      puts c.body_str
-      true
-    end
+  # Service user login
+  mattr_accessor :user
+  @@user = ''
+
+  # Service user password
+  mattr_accessor :pass
+  @@pass = ''
+
+  def self.configure
+    yield self
   end
 
 end
