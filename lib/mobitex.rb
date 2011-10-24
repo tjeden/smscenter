@@ -17,6 +17,13 @@ module Mobitex
   mattr_accessor :pass
   @@pass = ''
 
+  # Default delivery options
+  mattr_accessor :default
+  @@default = {
+      :from  => '',
+      :from2 => ''
+  }
+
   def self.configure
     yield self
   end
