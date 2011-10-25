@@ -16,7 +16,6 @@ Gem::Specification.new do |gem|
   gem.version       = Mobitex::VERSION
 
   gem.add_dependency 'activesupport', '~> 3.0'
-  gem.add_dependency 'curb'
 
   gem.add_development_dependency 'minitest'
   gem.add_development_dependency 'webmock'
