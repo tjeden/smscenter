@@ -1,22 +1,35 @@
 module Mobitex
 
-  class Sms
-    attr_accessor :type, :number, :text, :from, :ext_id
+  class Outbox
+    DEFAULT_FROM = 'SMS Service'
+    DEFAULT_TYPE = 'sms'
 
-    def self.connection(refresh = false)
-      @connection = Connection.new(Mobitex.site, Mobitex.user, Mobitex.pass) if refresh || @connection.nil?
-      @connection
+    @@default_from = DEFAULT_FROM unless defined? @@default_from
+    def self.default_from; @@default_from; end
+    def self.default_from=(default_from); @@default_from = default_from; end
+        
+    @@default_type = DEFAULT_TYPE unless defined? @@default_type
+    def self.default_type; @@default_type; end
+    def self.default_type=(default_type); @@default_type = default_type; end
+        
+    def self.configure
+      yield self
     end
 
-    def deliver!
-      raw_response = connection.post('/send.php', {:type => type, :number => number, :text => text, :from => from}) # 'ext_id', ext_id
+    def initialize(user, pass)
+      @connection = Connection.new(Mobitex.site, user, pass)
+    end
+
+    def deliver_sms(receiver, message_text, opts = {})
+      params = {
+          :number => receiver,
+          :text   => message_text,
+          :from   => self.class.default_from,
+          :type   => self.class.default_type
+      }.merge!(opts)
+
+      raw_response = @connection.post('/send.php', params)
       handle_response(parse_response(raw_response.body))
-    end
-
-    protected
-
-    def connection(refresh = false)
-      self.class.connection(refresh)
     end
 
     private

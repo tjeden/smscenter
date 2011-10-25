@@ -5,6 +5,7 @@ module Mobitex
 
     def initialize(site, user = nil, pass = nil)
       raise ArgumentError, 'Missing site URI' unless site
+
       self.site = site
       self.user = user
       self.pass = pass
@@ -24,26 +25,25 @@ module Mobitex
 
     private
 
+    attr_writer :user, :pass
+
     # Set URI for remote service.
     def site=(site)
       @site = site.is_a?(URI) ? site : URI.parser.parse(site)
     end
 
-    def user=(user)
-      @user = user
-    end
-
-    def pass=(pass)
-      @pass = pass
-    end
-
     # Makes a request to the remote service.
-    def request(method, path, params)
-      params ||= {}
-      response = http.send(method, path, params.merge(:user => user, :pass => pass).to_query)
+    def request(method, path, params = {})
+      params = {:user => user, :pass => pass}.merge(params)
+      response = http.send(method, path, query(params))
       handle_response(response)
     rescue Timeout::Error => e
       raise TimeoutError.new(e.message)
+    end
+
+    def query(params)
+      require 'cgi' unless defined?(CGI) && defined?(CGI::escape)
+      params.map{ |k, v| "#{CGI.escape(k.to_s)}=#{CGI.escape(v.to_s)}" }.join('&')
     end
 
     # Handles response and error codes from the remote service.

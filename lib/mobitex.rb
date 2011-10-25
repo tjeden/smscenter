@@ -1,29 +1,16 @@
-require 'active_support'
 require 'mobitex/connection'
+require 'mobitex/inbox'
 require 'mobitex/errors'
-require 'mobitex/sms'
+require 'mobitex/outbox'
 require 'mobitex/version'
 
 module Mobitex
+  DEFAULT_SITE = 'http://api.statsms.net'.freeze
 
   # API address
-  mattr_accessor :site
-  @@site = 'http://api.statsms.net'
-
-  # Service user login
-  mattr_accessor :user
-  @@user = ''
-
-  # Service user password
-  mattr_accessor :pass
-  @@pass = ''
-
-  # Default delivery options
-  mattr_accessor :default
-  @@default = {
-      :from  => '',
-      :from2 => ''
-  }
+  @@site = DEFAULT_SITE unless defined? @@site
+  def self.site; @@site; end
+  def self.site=(site); @@site = site; end
 
   def self.configure
     yield self
