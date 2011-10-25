@@ -8,12 +8,9 @@ module Mobitex
       @connection
     end
 
-    def initialize(options = {})
-    end
-
     def deliver!
-      response = connection.post('/send.php', {:type => type, :number => number, :text => text, :from => from}) # 'ext_id', ext_id
-      handle_response(parse_response(response.body))
+      raw_response = connection.post('/send.php', {:type => type, :number => number, :text => text, :from => from}) # 'ext_id', ext_id
+      handle_response(parse_response(raw_response.body))
     end
 
     protected
@@ -28,10 +25,10 @@ module Mobitex
     #
     #     parse_response('Status: 001, Id: 3e2dc963309c6b574f6c7467a62ef25b, Number: 123456789')
     #         # -> {'Status' => '001', 'Id' => '3e2dc963309c6b574f6c7467a62ef25b', 'Number' => '123456789'}
-    def parse_response(response)
-      parsed = {}
-      response.to_s.split(',').map{ |e| part = e.partition(':'); parsed[part.first.strip] = part.last.strip }
-      parsed
+    def parse_response(raw_response)
+      response = {}
+      raw_response.to_s.split(',').map{ |e| part = e.partition(':'); response[part.first.strip] = part.last.strip }
+      response
     end
 
     def handle_response(response)
