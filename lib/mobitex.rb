@@ -1,5 +1,4 @@
 require 'mobitex/connection'
-require 'mobitex/inbox'
 require 'mobitex/errors'
 require 'mobitex/outbox'
 require 'mobitex/version'
