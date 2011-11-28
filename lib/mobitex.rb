@@ -2,6 +2,7 @@ require 'mobitex/connection'
 require 'mobitex/errors'
 require 'mobitex/outbox'
 require 'mobitex/version'
+require 'mobitex/test_helpers'
 
 module Mobitex
   DEFAULT_SITE = 'http://api.statsms.net'.freeze
