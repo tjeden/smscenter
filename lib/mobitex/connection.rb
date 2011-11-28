@@ -29,7 +29,7 @@ module Mobitex
 
     # Set URI for remote service.
     def site=(site)
-      @site = site.is_a?(URI) ? site : URI::Parser.new.parse(site)
+      @site = site.is_a?(URI) ? site : URI.parse(site)
     end
 
     # Makes a request to the remote service.

@@ -9,6 +9,7 @@ GEM
     addressable (2.2.6)
     crack (0.3.1)
     minitest (2.6.2)
+    rake (0.9.2)
     webmock (1.7.7)
       addressable (~> 2.2, > 2.2.5)
       crack (>= 0.1.7)
@@ -19,4 +20,5 @@ PLATFORMS
 DEPENDENCIES
   minitest
   mobitex!
+  rake
   webmock
