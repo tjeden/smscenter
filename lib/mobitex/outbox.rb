@@ -3,6 +3,7 @@ module Mobitex
   class Outbox
     DEFAULT_FROM = 'SMS Service'
     DEFAULT_TYPE = 'sms'
+    LONG_TYPE    = 'concat'
 
     @@default_from = DEFAULT_FROM unless defined? @@default_from
     def self.default_from; @@default_from; end
@@ -25,7 +26,7 @@ module Mobitex
           :number => receiver,
           :text   => message_text,
           :from   => self.class.default_from,
-          :type   => self.class.default_type
+          :type   => type(message_text)
       }.merge!(opts)
 
       raw_response = @connection.post('/send.php', params)
@@ -33,6 +34,10 @@ module Mobitex
     end
 
     private
+
+    def type(message_text)
+      message_text.length > 160 ? LONG_TYPE : self.class.default_type
+    end
 
     # Returns hash from Mobitex response:
     #
