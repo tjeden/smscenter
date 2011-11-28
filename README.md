@@ -8,16 +8,14 @@ How to use it?
 
 Gemfile:
 
-    ``` ruby
+    ruby
     gem 'mobitex'
-    ```
     
 Code:
 
-    ``` ruby
+    ruby
     outbox = Mobitex::Outbox.new('username', 'password')
     outbox.deliver_sms('48500500500', 'you have got mail')
-    ```
     
 Enjoy!
 
@@ -28,7 +26,7 @@ Currentle Mobitex supports only `test/unit` with webmock/test\_unit
 
 Include `Mobitex::TestHelpers` in you test class and use `assert_sms_send`
 
-    ``` ruby
+    ruby
     class SomeTest < Test::Unit::TestCase
       include Mobitex::TestHelpers
 
@@ -39,23 +37,21 @@ Include `Mobitex::TestHelpers` in you test class and use `assert_sms_send`
         assert_sms_send('you have got mail')
       end
     end
-    ```
     
 `assert_sms_send` has few options:
 
-    ``` ruby
+    ruby
     # It can check custom number
     assert_sms_send('some text', :number => '48666666666')
     # It can check if long sms has been send (more than 160 chars)
     assert_sms_send('some long text', :type => 'concat')
-    ```
     
 Custom setup in tests
 ---------------------
 
 If you use custom setup in your tests don't forget to initialize web\_mock in `setup`:
 
-    ``` ruby
+    ruby
     def setup
       WebMock.reset!
       WebMock.disable_net_connect!
@@ -66,10 +62,10 @@ If you use custom setup in your tests don't forget to initialize web\_mock in `s
 
 Or you can just run super in `setup` method, it will stub requests and prepare web\_mock.
    
-    ``` ruby
+    ruby
     def setup
       # some your code goes here
       super
     end
-    ```
+
 
