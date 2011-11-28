@@ -13,10 +13,11 @@ Gemfile:
     
 Code:
 
-    ruby
-    outbox = Mobitex::Outbox.new('username', 'password')
-    outbox.deliver_sms('48500500500', 'you have got mail')
-    
+``` ruby
+outbox = Mobitex::Outbox.new('username', 'password')
+outbox.deliver_sms('48500500500', 'you have got mail')
+```
+
 Enjoy!
 
 How to test it?
