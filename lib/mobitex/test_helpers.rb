@@ -4,6 +4,7 @@ module Mobitex
 
     module InstanceMethods
       def setup
+        puts 'webmock'
         WebMock.reset!
         WebMock.disable_net_connect!
         stub_request(:post, "http://api.statsms.net/send.php").
