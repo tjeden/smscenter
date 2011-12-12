@@ -1,4 +1,4 @@
-requite 'net/http'
+require 'net/http'
 
 require 'mobitex/connection'
 require 'mobitex/errors'
