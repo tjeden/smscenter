@@ -1,3 +1,5 @@
+requite 'net/http'
+
 require 'mobitex/connection'
 require 'mobitex/errors'
 require 'mobitex/outbox'

@@ -37,7 +37,7 @@ module Mobitex
       params = {:user => user, :pass => pass}.merge(params)
       response = http.send(method, path, query(params))
       handle_response(response)
-    rescue ::Timeout::Error => e
+    rescue Timeout::Error => e
       raise TimeoutError.new(e.message)
     end
 
