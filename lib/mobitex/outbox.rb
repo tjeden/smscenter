@@ -28,6 +28,8 @@ module Mobitex
           :from   => self.class.default_from,
           :type   => type(message_text)
       }.merge!(opts)
+      
+      params[:from] = params[:from][0..10]
 
       raw_response = @connection.post('/send.php', params)
       handle_response(parse_response(raw_response.body))
