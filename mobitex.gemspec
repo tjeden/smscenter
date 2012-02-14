@@ -2,7 +2,7 @@
 require File.expand_path('../lib/mobitex/version', __FILE__)
 
 Gem::Specification.new do |gem|
-  gem.authors       = ['Aleksadner Dąbrowski', 'Karol Sarnacki']
+  gem.authors       = ['Aleksander Dąbrowski', 'Karol Sarnacki']
   gem.email         = ['tjeden@rubysfera.pl', 'karol.sarnacki@connectmedica.pl']
   gem.description   = "Ruby interface to Mobitex's Smscenter API"
   gem.summary       = "Ruby interface to Mobitex's Smscenter API"
