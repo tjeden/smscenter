@@ -1,23 +1,17 @@
 module Mobitex
 
   class Outbox
-    DEFAULT_FROM = 'SMS Service'
-    DEFAULT_TYPE = 'sms'
     LONG_TYPE    = 'concat'
 
-    @@default_from = DEFAULT_FROM unless defined? @@default_from
-    def self.default_from; @@default_from; end
-    def self.default_from=(default_from); @@default_from = default_from; end
-        
-    @@default_type = DEFAULT_TYPE unless defined? @@default_type
-    def self.default_type; @@default_type; end
-    def self.default_type=(default_type); @@default_type = default_type; end
-        
-    def self.configure
-      yield self
-    end
+    attr_accessor *Mobitex::Config::VALID_OPTIONS_KEYS
 
     def initialize(options = {})
+      options = Mobitex.options.merge(options)
+
+      Mobitex::Config::VALID_OPTIONS_KEYS.each do |key|
+        instance_variable_set("@#{key}".to_sym, options[key]) # @api_site = options[:api_site]
+      end
+
       @connection = Connection.new(Mobitex.api_site, options[:api_user], options[:api_pass])
     end
 
