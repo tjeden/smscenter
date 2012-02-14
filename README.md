@@ -21,7 +21,7 @@ Code:
 
 ``` ruby
 outbox = Mobitex::Outbox.new('username', 'password')
-outbox.deliver_sms('48500500500', 'you have got mail')
+outbox.deliver('48500500500', 'you have got mail')
 ```
 
 Enjoy!
@@ -29,55 +29,53 @@ Enjoy!
 How to test it?
 ---------------
 
-Currently Mobitex supports only `test/unit` with webmock/test\_unit
+Currently Mobitex supports `minitest`, `test/unit` and `rspec` and requires `webmock`.
 
-Include `Mobitex::TestHelpers` in you test class and use `assert_sms_send`
+Require appropriate library for your testing framework:
 
 ``` ruby
-class SomeTest < Test::Unit::TestCase
-  include Mobitex::TestHelpers
+require 'mobitex/minitest'
+require 'mobitex/test_unit'
+require 'mobitex/rspec'
+```
 
-  def test_sms_delivery
-    outbox = Mobitex::Outbox.new('faked', 'faked')
-    outbox.deliver_sms('48123456789', 'you have got mail')
+Then use `assert_delivered`:
 
-    assert_sms_send('you have got mail')
+``` ruby
+describe 'Dispatcher' do
+
+  before do
+    WebMock.reset!
+    WebMock.disable_net_connect!
   end
+
+  it 'delivers short text message' do
+    outbox = Mobitex::Outbox.new(:api_user => 'faked', :api_pass => 'faked')
+    assert_delivered 'I want to play a game' do
+      outbox.deliver('48123456789', 'I want to play a game')
+    end
+  end
+
 end
-``` 
+```
     
-`assert_sms_send` has few options:
+`assert_delivered` has few options:
 
 ``` ruby
 # It can check custom number
-assert_sms_send('some text', :number => '48666666666')
+assert_delivered('some text', :number => '48666666666') do ...
 # It can check if long sms has been send (more than 160 chars)
-assert_sms_send('some long text', :type => 'concat')
+assert_delivered('some long text', :type => 'concat') do ...
 ``` 
     
-Custom setup in tests
----------------------
+Setup tests
+-----------
 
-If you use custom setup in your tests don't forget to initialize web\_mock in `setup`:
+Don't forget to initialize web\_mock in your `before`/`setup` step:
 
 ``` ruby
 def setup
   WebMock.reset!
   WebMock.disable_net_connect!
-  stub_request(:post, "http://api.statsms.net/send.php").
-    with( :headers => {'Accept'=>'*/*'}).
-    to_return(:status => 200, :body => "Status: 002, Id: 03a72a49fb9595f3737bc4a2519ff283, Number: 4860X123456", :headers => {})
 end
 ``` 
-
-Or you can just run super in `setup` method, it will stub requests and prepare web\_mock.
-   
-``` ruby
-def setup
-  # some your code goes here
-  super
-end
-``` 
-
-
-

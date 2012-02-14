@@ -2,60 +2,27 @@ require 'helper'
 
 describe Mobitex::Outbox do
 
-  describe 'with module configuration' do
+  describe 'when sending a message' do
 
     before do
-      Mobitex.configure do |config|
-        config.api_site       = 'http://api.example.com/module.php'
-        config.api_user       = 'Module User'
-        config.api_pass       = 'Module Password'
-        config.message_sender = 'Module Sender'
-        config.message_type   = 'sms_flash'
+      WebMock.reset!
+      WebMock.disable_net_connect!
+
+      @outbox = Mobitex::Outbox.new(:api_user => 'faked', :api_pass => 'faked')
+    end
+
+    it 'delivers short text' do
+      assert_delivered 'I want to play a game' do
+        @outbox.deliver('48123456789', 'I want to play a game')
       end
     end
 
-    after do
-      Mobitex.reset
-    end
+    it 'delivers long text' do
+      text = 'Chocolate cake marshmallow icing applicake pudding marzipan. Powder cupcake applicake. Carrot cake donut jelly tart carrot cake sweet roll donut tootsie roll chupa chups jelly. Chocolate candy fruitcake chocolate jujubes ice cream chocolate. Tart halvah faworki tiramisu souffle tiramisu jelly marshmallow. Toffee donut chupa chups powder souffle gingerbread jelly-o wafer chocolate cake. Cake wafer caramels chupa chups jelly carrot cake sweet powder tart.'
 
-    it 'inherits module configuration' do
-      outbox = Mobitex::Outbox.new
-
-      outbox.api_site.must_equal       'http://api.example.com/module.php'
-      outbox.api_user.must_equal       'Module User'
-      outbox.api_pass.must_equal       'Module Password'
-      outbox.message_sender.must_equal 'Module Sender'
-      outbox.message_type.must_equal   'sms_flash'
-    end
-
-    describe 'with class configuration' do
-
-      describe 'during initialization' do
-        it 'overrides module configuration' do
-          outbox = Mobitex::Outbox.new({:api_site => 'http://api.example.com/class.php', :api_user => 'Class Username'})
-
-          outbox.api_site.must_equal       'http://api.example.com/class.php'
-          outbox.api_user.must_equal       'Class Username'
-          outbox.api_pass.must_equal       'Module Password'
-          outbox.message_sender.must_equal 'Module Sender'
-          outbox.message_type.must_equal   'sms_flash'
-        end
+      assert_delivered text, {:type => 'concat'} do
+        @outbox.deliver('48123456789', text)
       end
-
-      describe 'after initilization' do
-        it 'overrides module configuration after initialization' do
-          outbox = Mobitex::Outbox.new
-          outbox.api_site = 'http://api.example.com/class.php'
-          outbox.api_user = 'Class Username'
-
-          outbox.api_site.must_equal       'http://api.example.com/class.php'
-          outbox.api_user.must_equal       'Class Username'
-          outbox.api_pass.must_equal       'Module Password'
-          outbox.message_sender.must_equal 'Module Sender'
-          outbox.message_type.must_equal   'sms_flash'
-        end
-      end
-
     end
 
   end

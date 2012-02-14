@@ -15,11 +15,11 @@ module Mobitex
       @connection = Connection.new(Mobitex.api_site, options[:api_user], options[:api_pass])
     end
 
-    def deliver_sms(receiver, message_text, opts = {})
+    def deliver(receiver, message_text, opts = {})
       params = {
           :number => receiver,
           :text   => message_text,
-          :from   => self.class.default_from,
+          :from   => self.message_sender,
           :type   => type(message_text)
       }.merge!(opts)
       
@@ -32,7 +32,7 @@ module Mobitex
     private
 
     def type(message_text)
-      message_text.length > 160 ? LONG_TYPE : self.class.default_type
+      message_text.length > 160 ? LONG_TYPE : self.message_type
     end
 
     # Returns hash from Mobitex response:

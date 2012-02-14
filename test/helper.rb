@@ -1,4 +1,6 @@
 require 'rubygems'
 require 'minitest/autorun'
-require 'turn'
+require 'webmock/minitest'
 require 'mobitex'
+require 'mobitex/minitest'
+require 'turn'
