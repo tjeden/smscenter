@@ -17,8 +17,8 @@ module Mobitex
       yield self
     end
 
-    def initialize(user, pass)
-      @connection = Connection.new(Mobitex.site, user, pass)
+    def initialize(options = {})
+      @connection = Connection.new(Mobitex.api_site, options[:api_user], options[:api_pass])
     end
 
     def deliver_sms(receiver, message_text, opts = {})
