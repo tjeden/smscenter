@@ -1,7 +1,12 @@
 Mobitex gem - wrapper to mobitex API
-===================================
+====================================
 
-[![Build Status](https://secure.travis-ci.org/tjeden/smscenter.png)](http://travis-ci.org/tjeden/smscenter)
+[![Build Status](https://secure.travis-ci.org/tjeden/smscenter.png)][travis]
+[![Dependency Status](https://gemnasium.com/tjeden/smscenter.png?travis)][gemnasium]
+
+[travis]: http://travis-ci.org/tjeden/smscenter
+[gemnasium]: https://gemnasium.com/tjeden/smscenter
+
 
 How to use it?
 --------------
