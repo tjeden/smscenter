@@ -24,7 +24,7 @@ Enjoy!
 How to test it?
 ---------------
 
-Currentle Mobitex supports only `test/unit` with webmock/test\_unit
+Currently Mobitex supports only `test/unit` with webmock/test\_unit
 
 Include `Mobitex::TestHelpers` in you test class and use `assert_sms_send`
 
