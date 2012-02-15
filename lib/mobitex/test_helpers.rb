@@ -1,3 +1,5 @@
+require 'cgi'
+
 module Mobitex
 
   # Mobitex::TestHelpers provide a faciality to test mobitex gem
@@ -8,9 +10,9 @@ module Mobitex
       options[:number] ||= '48123456789'
       options[:type]   ||= 'sms'
 
-      number  = Regexp.new("number=#{options[:number]}")
-      content = Regexp.new("text=#{message.gsub(/ /, '\\\\+')}")
-      type    = Regexp.new("type=#{options[:type]}")
+      number_param  = "number=#{CGI::escape(options[:number])}"
+      content_param = "text=#{CGI::escape(message)}"
+      type_param    = "type=#{CGI::escape(options[:type])}"
 
       stub_request(:post, Mobitex.api_site + '/send.php').
           with(:headers => {'Accept' => '*/*'}).
@@ -19,7 +21,7 @@ module Mobitex
       yield
 
       assert_requested(:post, Mobitex.api_site + '/send.php', :times => 1) do |req|
-        req.body =~ number && req.body =~ type && req.body =~ content && req.body =~ /pass=faked/ && req.body =~ /user=faked/
+        req.body.index(number_param) && req.body.index(type_param) && req.body.index(content_param) && req.body.index('pass=faked') && req.body.index('user=faked')
       end
     end
 

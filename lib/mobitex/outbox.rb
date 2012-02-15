@@ -1,7 +1,8 @@
 module Mobitex
 
   class Outbox
-    LONG_TYPE    = 'concat'
+    LONG_TYPE         = 'concat'
+    DOUBLE_CHARACTERS = '[]~^{}|\\'
 
     attr_accessor *Mobitex::Config::VALID_OPTIONS_KEYS
 
@@ -15,12 +16,12 @@ module Mobitex
       @connection = Connection.new(Mobitex.api_site, options[:api_user], options[:api_pass])
     end
 
-    def deliver(receiver, message_text, opts = {})
+    def deliver(receiver, message, opts = {})
       params = {
           :number => receiver,
-          :text   => message_text,
+          :text   => message,
           :from   => self.message_sender,
-          :type   => type(message_text)
+          :type   => type(message)
       }.merge!(opts)
       
       params[:from] = params[:from][0..10]
@@ -31,8 +32,13 @@ module Mobitex
 
     private
 
-    def type(message_text)
-      message_text.length > 160 ? LONG_TYPE : self.message_type
+    def type(message)
+      length(message) > 160 ? LONG_TYPE : self.message_type
+    end
+
+
+    def length(message)
+      message.length + message.count(DOUBLE_CHARACTERS)
     end
 
     # Returns hash from Mobitex response:
