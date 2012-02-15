@@ -59,7 +59,7 @@ describe 'Dispatcher' do
 end
 ```
     
-`assert_delivered` has few options:
+`assert_delivered` has a few options:
 
 ``` ruby
 # It can check custom number
