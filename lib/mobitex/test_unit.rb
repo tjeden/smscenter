@@ -1,5 +1,5 @@
 require 'test/unit'
-require 'mobitex'
+require 'mobitex/test_helpers'
 
 module Test
   module Unit

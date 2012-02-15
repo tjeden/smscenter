@@ -1,3 +1,6 @@
+require 'net/http'
+require 'mobitex/connection_errors'
+
 module Mobitex
 
   class Connection

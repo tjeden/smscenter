@@ -1,4 +1,4 @@
-require 'mobitex'
+require 'mobitex/test_helpers'
 
 # RSpec 1.x and 2.x compatibility
 if defined?(RSpec) && defined?(RSpec::Expectations)

@@ -1,12 +1,5 @@
-require 'net/http'
-
 require 'mobitex/config'
-require 'mobitex/connection'
-require 'mobitex/connection_errors'
-require 'mobitex/delivery_errors'
 require 'mobitex/outbox'
-require 'mobitex/version'
-require 'mobitex/test_helpers'
 
 module Mobitex
   extend Mobitex::Config
