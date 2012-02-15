@@ -36,7 +36,6 @@ module Mobitex
       length(message) > 160 ? LONG_TYPE : self.message_type
     end
 
-
     def length(message)
       message.length + message.count(DOUBLE_CHARACTERS)
     end
