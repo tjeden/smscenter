@@ -1,14 +1,14 @@
 module Mobitex
 
   class Message
-    TYPES                    = %w(sms concat sms_flash wap_push binary)
-    NUMBER_REGEXP            = /^\d{11}$/
-    NUMERIC_FROM_REGEXP      = /^\d{1,16}$/
-    ALPHANUMERIC_FROM_REGEXP = /^\[a-zA-Z0-9]{1,11}$/
-    FROM_REGEXP              = Regexp.union(NUMERIC_FROM_REGEXP, ALPHANUMERIC_FROM_REGEXP)
-    EXT_ID_CHARACTERS        = '!@#$%^&*()_+-={}|[]:<>'
-    EXT_ID_REGEXP            = Regexp.new('^[a-zA-Z0-9' + Regexp.escape(EXT_ID_CHARACTERS) + ']{,50}$')
-    DOUBLE_CHARACTERS        = '[]~^{}|\\'
+    TYPES                    = %w(sms concat sms_flash wap_push binary).freeze
+    NUMBER_REGEXP            = /^\d{11}$/.freeze
+    NUMERIC_FROM_REGEXP      = /^\d{1,16}$/.freeze
+    ALPHANUMERIC_FROM_REGEXP = /^[a-zA-Z0-9]{1,11}$/.freeze
+    FROM_REGEXP              = Regexp.union(NUMERIC_FROM_REGEXP, ALPHANUMERIC_FROM_REGEXP).freeze
+    EXT_ID_CHARACTERS        = '!@#$%^&*()_+-={}|[]:<>'.freeze
+    EXT_ID_REGEXP            = Regexp.new('^[a-zA-Z0-9' + Regexp.escape(EXT_ID_CHARACTERS) + ']{0,50}$').freeze
+    DOUBLE_CHARACTERS        = '[]~^{}|\\'.freeze
 
     attr_accessor :type, :number, :text, :from, :ext_id
 
@@ -17,15 +17,15 @@ module Mobitex
     end
 
     def self.number_valid?(number)
-      number.to_s =~ NUMBER_REGEXP
+      !!(number.to_s =~ NUMBER_REGEXP)
     end
 
     def self.from_valid?(from)
-      from.to_s =~ FROM_REGEXP
+      !!(from.to_s =~ FROM_REGEXP)
     end
 
     def self.ext_id_valid?(ext_id)
-      ext_id.to_s =~ EXT_ID_REGEXP
+      !!(ext_id.to_s =~ EXT_ID_REGEXP)
     end
 
     def initialize(number, text = '', options = {})
