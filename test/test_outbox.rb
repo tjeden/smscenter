@@ -29,9 +29,35 @@ describe Mobitex::Outbox do
       text = 'Some [characters] are treated as {double|symbols}, so even if a ~message length in ^Ruby is 160,\\ it will be sent as "concat" by gateway and take up more space.'
 
       text.length.must_equal 160
-
       assert_delivered text, {:type => 'concat'} do
         @outbox.deliver('48123456789', text)
+      end
+    end
+
+    it 'limits "from" field to 16 digits if it is a number' do
+      from = 48123456789012345678
+
+      assert from.to_s.length > 16
+      assert_delivered 'From me to you', {:from => '4812345678901234'} do
+        @outbox.deliver('48123456789', 'From me to you', :from => from)
+      end
+    end
+
+    it 'limits "from" field to 16 characters if it looks like a number' do
+      from = '48123456789012345678'
+
+      assert from.length > 16
+      assert_delivered 'From me to you', {:from => '4812345678901234'} do
+        @outbox.deliver('48123456789', 'From me to you', :from => from)
+      end
+    end
+
+    it 'limits "from" field to 11 characters if it is alphanumeric' do
+      from = 'Spam bacon sausage and spam'
+
+      assert from.length > 11
+      assert_delivered 'From me to you', {:from => 'Spam bacon '} do
+        @outbox.deliver('48123456789', 'From me to you', :from => from)
       end
     end
 

@@ -6,13 +6,15 @@ module Mobitex
   module TestHelpers
     extend self
 
-    def assert_delivered(message, options = {}, msg = nil, &block)
+    def assert_delivered(message, options = {}, &block)
       options[:number] ||= '48123456789'
       options[:type]   ||= 'sms'
+      options[:from]   ||= 'SMS Service'
 
       number_param  = "number=#{CGI::escape(options[:number])}"
       content_param = "text=#{CGI::escape(message)}"
       type_param    = "type=#{CGI::escape(options[:type])}"
+      from_param    = "from=#{CGI::escape(options[:from])}"
 
       stub_request(:post, Mobitex.api_site + '/send.php').
           with(:headers => {'Accept' => '*/*'}).
@@ -21,7 +23,8 @@ module Mobitex
       yield
 
       assert_requested(:post, Mobitex.api_site + '/send.php', :times => 1) do |req|
-        req.body.index(number_param) && req.body.index(type_param) && req.body.index(content_param) && req.body.index('pass=faked') && req.body.index('user=faked')
+        req.body.index(number_param) && req.body.index(type_param) && req.body.index(content_param) &&
+            req.body.index(from_param) && req.body.index('pass=faked') && req.body.index('user=faked')
       end
     end
 

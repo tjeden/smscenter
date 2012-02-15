@@ -24,7 +24,7 @@ module Mobitex
           :type   => type(message)
       }.merge!(opts)
       
-      params[:from] = params[:from][0..10]
+      params[:from] = from(params[:from])
 
       raw_response = @connection.post('/send.php', params)
       handle_response(parse_response(raw_response.body))
@@ -38,6 +38,14 @@ module Mobitex
 
     def length(message)
       message.length + message.count(DOUBLE_CHARACTERS)
+    end
+
+    def from(from)
+      if from.is_a?(Numeric) || from =~ /^\d+$/
+        from.to_s[0...16]
+      else
+        from.to_s[0...11]
+      end
     end
 
     # Returns hash from Mobitex response:
