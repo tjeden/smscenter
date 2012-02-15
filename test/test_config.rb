@@ -57,16 +57,16 @@ describe Mobitex do
     end
   end
 
-  describe '.message_sender' do
+  describe '.message_from' do
     it 'returns the default message sender' do
-      Mobitex.message_sender.must_equal 'SMS Service'
+      Mobitex.message_from.must_equal 'SMS Service'
     end
   end
 
-  describe '.message_sender=' do
+  describe '.message_from=' do
     it 'sets the message sender' do
-      Mobitex.message_sender = 'My Sender'
-      Mobitex.message_sender.must_equal 'My Sender'
+      Mobitex.message_from = 'My Sender'
+      Mobitex.message_from.must_equal 'My Sender'
     end
   end
 
@@ -89,14 +89,14 @@ describe Mobitex do
         config.api_site       = 'http://api.example.com'
         config.api_user       = 'Mobitex User'
         config.api_pass       = 'Mobitex Password'
-        config.message_sender = 'My Sender'
+        config.message_from = 'My Sender'
         config.message_type   = 'concat'
       end
 
       Mobitex.api_site.must_equal       'http://api.example.com'
       Mobitex.api_user.must_equal       'Mobitex User'
       Mobitex.api_pass.must_equal       'Mobitex Password'
-      Mobitex.message_sender.must_equal 'My Sender'
+      Mobitex.message_from.must_equal 'My Sender'
       Mobitex.message_type.must_equal   'concat'
     end
   end
@@ -107,7 +107,7 @@ describe Mobitex do
         config.api_site       = 'http://api.example.com'
         config.api_user       = 'Mobitex User'
         config.api_pass       = 'Mobitex Password'
-        config.message_sender = 'My Sender'
+        config.message_from = 'My Sender'
         config.message_type   = 'concat'
       end
 
@@ -115,7 +115,7 @@ describe Mobitex do
       options[:api_site].must_equal       'http://api.example.com'
       options[:api_user].must_equal       'Mobitex User'
       options[:api_pass].must_equal       'Mobitex Password'
-      options[:message_sender].must_equal 'My Sender'
+      options[:message_from].must_equal 'My Sender'
       options[:message_type].must_equal   'concat'
     end
   end
@@ -131,7 +131,7 @@ describe Mobitex::Outbox do
         config.api_site       = 'http://api.example.com/module.php'
         config.api_user       = 'Module User'
         config.api_pass       = 'Module Password'
-        config.message_sender = 'Module Sender'
+        config.message_from = 'Module Sender'
         config.message_type   = 'sms_flash'
       end
     end
@@ -146,7 +146,7 @@ describe Mobitex::Outbox do
       outbox.api_site.must_equal       'http://api.example.com/module.php'
       outbox.api_user.must_equal       'Module User'
       outbox.api_pass.must_equal       'Module Password'
-      outbox.message_sender.must_equal 'Module Sender'
+      outbox.message_from.must_equal 'Module Sender'
       outbox.message_type.must_equal   'sms_flash'
     end
 
@@ -159,7 +159,7 @@ describe Mobitex::Outbox do
           outbox.api_site.must_equal       'http://api.example.com/class.php'
           outbox.api_user.must_equal       'Class Username'
           outbox.api_pass.must_equal       'Module Password'
-          outbox.message_sender.must_equal 'Module Sender'
+          outbox.message_from.must_equal 'Module Sender'
           outbox.message_type.must_equal   'sms_flash'
         end
       end
@@ -173,7 +173,7 @@ describe Mobitex::Outbox do
           outbox.api_site.must_equal       'http://api.example.com/class.php'
           outbox.api_user.must_equal       'Class Username'
           outbox.api_pass.must_equal       'Module Password'
-          outbox.message_sender.must_equal 'Module Sender'
+          outbox.message_from.must_equal 'Module Sender'
           outbox.message_type.must_equal   'sms_flash'
         end
       end

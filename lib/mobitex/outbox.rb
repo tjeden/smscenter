@@ -20,7 +20,7 @@ module Mobitex
       params = {
           :number => receiver,
           :text   => message,
-          :from   => self.message_sender,
+          :from   => self.message_from,
           :type   => type(message)
       }.merge!(opts)
       
