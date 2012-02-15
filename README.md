@@ -20,11 +20,61 @@ gem 'mobitex'
 Code:
 
 ``` ruby
-outbox = Mobitex::Outbox.new('username', 'password')
+outbox = Mobitex::Outbox.new(:api_user => 'username', :api_pass => 'password')
 outbox.deliver('48123456789', 'Spam bacon sausage and spam')
 ```
 
 Enjoy!
+
+More usage examples
+-------------------
+
+### Global configuration
+
+Setup global configuration:
+
+``` ruby
+Mobitex.configure do |config|
+  config.api_user = 'username'
+  config.api_pass = 'password'
+end
+```
+
+Then you can just:
+
+``` ruby
+Mobitex.deliver('48123456789', 'Egg sausage and bacon')
+```
+
+...which really is a shortcut for:
+
+``` ruby
+Mobitex::Outbox.new.deliver('48123456789', 'Egg sausage and bacon')
+```
+
+### Multiple Outboxes
+
+Setup global configuration:
+
+``` ruby
+Mobitex.configure do |config|
+  config.api_user     = 'user1'
+  config.api_pass     = 'pass2'
+  config.message_from = 'FullService'
+end
+```
+
+You can have multiple simultaneous clients:
+
+``` ruby
+outbox1 = Mobitex::Outbox.new                                             # Credentials and delivery options taken from global config
+outbox2 = Mobitex::Outbox.new(:message_from => 'SpamHouse')               # Custom "message_from" option, credentials from global config
+outbox3 = Mobitex::Outbox.new(:api_user => 'user3', :api_pass => 'pass3') # Custom credentials, "message_from" option from global config
+
+outbox1.deliver('48123456789', 'Hello from FullService!')
+outbox2.deliver('48123456789', 'SpamHouse welcomes you!')
+outbox3.deliver('48123456789', 'Other API client will be charged here')
+```
 
 How to test it?
 ---------------
