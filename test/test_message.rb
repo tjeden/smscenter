@@ -13,15 +13,15 @@ describe Mobitex::Message do
   end
 
   describe '.length' do
-    it 'returns length of the text with ' do
-      normal_characters  = 'Short message'
-      special_characters = '[square brackets] ~tilde ^caret {curly braces} |pipe \\backslash'
+    it 'returns length of the text with double characters' do
+      single_characters = 'Short message'
+      double_characters = '[square brackets] ~tilde ^caret {curly braces} |pipe \\backslash'
 
-      assert normal_characters.length.must_equal 13
-      assert Mobitex::Message.new('48123456789', normal_characters).length.must_equal 13
+      assert single_characters.length.must_equal 13
+      assert Mobitex::Message.new('48123456789', single_characters).length.must_equal 13
 
-      assert special_characters.length.must_equal 63
-      assert Mobitex::Message.new('48123456789', special_characters).length.must_equal 71
+      assert double_characters.length.must_equal 63
+      assert Mobitex::Message.new('48123456789', double_characters).length.must_equal 71
     end
   end
 
