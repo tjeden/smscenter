@@ -86,37 +86,37 @@ describe Mobitex do
   describe '.configure' do
     it 'sets the configuration in a block' do
       Mobitex.configure do |config|
-        config.api_site       = 'http://api.example.com'
-        config.api_user       = 'Mobitex User'
-        config.api_pass       = 'Mobitex Password'
+        config.api_site     = 'http://api.example.com'
+        config.api_user     = 'Mobitex User'
+        config.api_pass     = 'Mobitex Password'
         config.message_from = 'My Sender'
-        config.message_type   = 'concat'
+        config.message_type = 'concat'
       end
 
-      Mobitex.api_site.must_equal       'http://api.example.com'
-      Mobitex.api_user.must_equal       'Mobitex User'
-      Mobitex.api_pass.must_equal       'Mobitex Password'
+      Mobitex.api_site.must_equal     'http://api.example.com'
+      Mobitex.api_user.must_equal     'Mobitex User'
+      Mobitex.api_pass.must_equal     'Mobitex Password'
       Mobitex.message_from.must_equal 'My Sender'
-      Mobitex.message_type.must_equal   'concat'
+      Mobitex.message_type.must_equal 'concat'
     end
   end
 
   describe '.options' do
     it 'returns configuration as Hash' do
       Mobitex.configure do |config|
-        config.api_site       = 'http://api.example.com'
-        config.api_user       = 'Mobitex User'
-        config.api_pass       = 'Mobitex Password'
+        config.api_site     = 'http://api.example.com'
+        config.api_user     = 'Mobitex User'
+        config.api_pass     = 'Mobitex Password'
         config.message_from = 'My Sender'
-        config.message_type   = 'concat'
+        config.message_type = 'concat'
       end
 
       options = Mobitex.options
-      options[:api_site].must_equal       'http://api.example.com'
-      options[:api_user].must_equal       'Mobitex User'
-      options[:api_pass].must_equal       'Mobitex Password'
+      options[:api_site].must_equal     'http://api.example.com'
+      options[:api_user].must_equal     'Mobitex User'
+      options[:api_pass].must_equal     'Mobitex Password'
       options[:message_from].must_equal 'My Sender'
-      options[:message_type].must_equal   'concat'
+      options[:message_type].must_equal 'concat'
     end
   end
 
@@ -128,11 +128,11 @@ describe Mobitex::Outbox do
 
     before do
       Mobitex.configure do |config|
-        config.api_site       = 'http://api.example.com/module.php'
-        config.api_user       = 'Module User'
-        config.api_pass       = 'Module Password'
+        config.api_site     = 'http://api.example.com/module.php'
+        config.api_user     = 'Module User'
+        config.api_pass     = 'Module Password'
         config.message_from = 'Module Sender'
-        config.message_type   = 'sms_flash'
+        config.message_type = 'sms_flash'
       end
     end
 
@@ -143,11 +143,11 @@ describe Mobitex::Outbox do
     it 'inherits module configuration' do
       outbox = Mobitex::Outbox.new
 
-      outbox.api_site.must_equal       'http://api.example.com/module.php'
-      outbox.api_user.must_equal       'Module User'
-      outbox.api_pass.must_equal       'Module Password'
+      outbox.api_site.must_equal     'http://api.example.com/module.php'
+      outbox.api_user.must_equal     'Module User'
+      outbox.api_pass.must_equal     'Module Password'
       outbox.message_from.must_equal 'Module Sender'
-      outbox.message_type.must_equal   'sms_flash'
+      outbox.message_type.must_equal 'sms_flash'
     end
 
     describe 'with class configuration' do
@@ -156,11 +156,11 @@ describe Mobitex::Outbox do
         it 'overrides module configuration' do
           outbox = Mobitex::Outbox.new({:api_site => 'http://api.example.com/class.php', :api_user => 'Class Username'})
 
-          outbox.api_site.must_equal       'http://api.example.com/class.php'
-          outbox.api_user.must_equal       'Class Username'
-          outbox.api_pass.must_equal       'Module Password'
+          outbox.api_site.must_equal     'http://api.example.com/class.php'
+          outbox.api_user.must_equal     'Class Username'
+          outbox.api_pass.must_equal     'Module Password'
           outbox.message_from.must_equal 'Module Sender'
-          outbox.message_type.must_equal   'sms_flash'
+          outbox.message_type.must_equal 'sms_flash'
         end
       end
 
@@ -170,11 +170,11 @@ describe Mobitex::Outbox do
           outbox.api_site = 'http://api.example.com/class.php'
           outbox.api_user = 'Class Username'
 
-          outbox.api_site.must_equal       'http://api.example.com/class.php'
-          outbox.api_user.must_equal       'Class Username'
-          outbox.api_pass.must_equal       'Module Password'
+          outbox.api_site.must_equal     'http://api.example.com/class.php'
+          outbox.api_user.must_equal     'Class Username'
+          outbox.api_pass.must_equal     'Module Password'
           outbox.message_from.must_equal 'Module Sender'
-          outbox.message_type.must_equal   'sms_flash'
+          outbox.message_type.must_equal 'sms_flash'
         end
       end
 
