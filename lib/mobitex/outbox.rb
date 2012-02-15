@@ -23,6 +23,12 @@ module Mobitex
       handle_response(parse_response(raw_response.body))
     end
 
+    def bulk_deliver(receivers, message, options = {})
+      message = Mobitex::Message.new([*receivers].join(','), message, {:from => message_from}.merge(options))
+      raw_response = @connection.post('/send.php', message.to_params)
+      parse_bulk_response(raw_response.body)
+    end
+
     private
 
     # Returns hash from Mobitex response:
@@ -33,6 +39,17 @@ module Mobitex
       response = {}
       raw_response.to_s.split(',').map{ |e| part = e.partition(':'); response[part.first.strip] = part.last.strip }
       response
+    end
+
+    # Returns hash from Mobitex bulk response:
+    #
+    #     parse_bulk_response("Status: 001, Id: 3e2dc963309c6b574f6c7467a62ef25b, Number: 123456789\nStatus: 106, Id: 251eb8c426466a149bacf15f6c00eacf, Number: 987654321")
+    #         # -> [{'Status' => '001', 'Id' => '3e2dc963309c6b574f6c7467a62ef25b', 'Number' => '123456789'},
+    #         #     {'Status' => '106', 'Id' => '251eb8c426466a149bacf15f6c00eacf', 'Number' => '987654321'}]
+    def parse_bulk_response(raw_bulk_response)
+      raw_bulk_response.lines.map do |raw_response|
+        parse_response(raw_response)
+      end
     end
 
     def handle_response(response)
