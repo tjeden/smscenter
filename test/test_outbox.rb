@@ -11,17 +11,47 @@ describe Mobitex::Outbox do
       @outbox = Mobitex::Outbox.new(:api_user => 'faked', :api_pass => 'faked')
     end
 
-    it 'delivers short text' do
+    it 'delivers sms message by default' do
       assert_delivered 'I want to play a game' do
         @outbox.deliver('48123456789', 'I want to play a game')
       end
     end
 
-    it 'delivers long text as "concat"' do
+    it 'delivers sms message' do
+      assert_delivered 'I want to play a game', {:type => 'sms'} do
+        @outbox.deliver('48123456789', 'I want to play a game', :type => 'sms')
+      end
+    end
+
+    it 'delivers long sms message as concat message' do
       text = 'Chocolate cake marshmallow icing applicake pudding marzipan. Powder cupcake applicake. Carrot cake donut jelly tart carrot cake sweet roll donut tootsie roll chupa chups jelly. Chocolate candy fruitcake chocolate jujubes ice cream chocolate. Tart halvah faworki tiramisu souffle tiramisu jelly marshmallow. Toffee donut chupa chups powder souffle gingerbread jelly-o wafer chocolate cake. Cake wafer caramels chupa chups jelly carrot cake sweet powder tart.'
 
       assert_delivered text, {:type => 'concat'} do
         @outbox.deliver('48123456789', text)
+      end
+    end
+
+    it 'delivers concat message' do
+      assert_delivered 'I want to play a game', {:type => 'concat'} do
+        @outbox.deliver('48123456789', 'I want to play a game', :type => 'concat')
+      end
+    end
+
+    it 'delivers sms flash message' do
+      assert_delivered 'Flash! King of the impossible', {:type => 'sms_flash'} do
+        @outbox.deliver('48123456789', 'Flash! King of the impossible', :type => 'sms_flash')
+      end
+    end
+
+    it 'delivers wap push message' do
+      assert_delivered 'My Link|http://example.com', {:type => 'wap_push'} do
+        @outbox.deliver('48123456789', 'My Link|http://example.com', :type => 'wap_push')
+      end
+    end
+
+    it 'delivers binary message' do
+      assert_delivered 'Bin bin bin', {:type => 'binary'} do
+        @outbox.deliver('48123456789', 'Bin bin bin', :type => 'binary')
       end
     end
 

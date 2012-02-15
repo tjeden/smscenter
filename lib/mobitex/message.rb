@@ -11,10 +11,11 @@ module Mobitex
       self.text   = text
       self.from   = options[:from]
       self.ext_id = options[:ext_id]
+      self.type   = options[:type]
     end
 
     def type
-      length > 160 ? LONG_TYPE : 'sms'
+      @type ||= length > 160 ? 'concat' : 'sms'
     end
 
     def length
