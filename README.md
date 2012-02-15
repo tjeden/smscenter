@@ -31,7 +31,7 @@ More usage examples
 
 ### Global configuration
 
-Setup global configuration:
+You can set up global configuration:
 
 ``` ruby
 Mobitex.configure do |config|
@@ -53,8 +53,6 @@ Mobitex::Outbox.new.deliver('48123456789', 'Egg sausage and bacon')
 ```
 
 ### Multiple Outboxes
-
-Setup global configuration:
 
 ``` ruby
 Mobitex.configure do |config|
