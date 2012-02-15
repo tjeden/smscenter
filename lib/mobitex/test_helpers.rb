@@ -1,5 +1,3 @@
-require 'cgi'
-
 module Mobitex
 
   # Mobitex::TestHelpers provide a faciality to test mobitex gem
@@ -7,14 +5,16 @@ module Mobitex
     extend self
 
     def assert_delivered(message, options = {}, &block)
+      require 'cgi' unless defined?(CGI) && defined?(CGI::escape)
+
       options[:number] ||= '48123456789'
       options[:type]   ||= 'sms'
       options[:from]   ||= 'SMS Service'
 
-      number_param  = "number=#{CGI::escape(options[:number])}"
-      content_param = "text=#{CGI::escape(message)}"
-      type_param    = "type=#{CGI::escape(options[:type])}"
-      from_param    = "from=#{CGI::escape(options[:from])}"
+      number_param  = "number=#{CGI::escape(options[:number].to_s)}"
+      content_param = "text=#{CGI::escape(message.to_s)}"
+      type_param    = "type=#{CGI::escape(options[:type].to_s)}"
+      from_param    = "from=#{CGI::escape(options[:from].to_s)}"
 
       stub_request(:post, Mobitex.api_site + '/send.php').
           with(:headers => {'Accept' => '*/*'}).
