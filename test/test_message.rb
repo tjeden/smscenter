@@ -171,15 +171,45 @@ describe Mobitex::Message do
     end
 
     describe 'for wap_push message' do
+      describe 'with short link and title' do
+        it 'returns true' do
+          Mobitex::Message.new('48123456789', 'Link description|http://example.com/spam-n-ham').text_valid?.must_equal true
+        end
+      end
+
+      describe 'with short secure link and title' do
+        it 'returns true' do
+          Mobitex::Message.new('48123456789', 'Link description|https://example.com/spam-n-ham').text_valid?.must_equal true
+        end
+      end
+
       describe 'with 225-or-less-character string' do
         it 'returns true' do
-          Mobitex::Message.new('48123456789', 'Chocolate cake marshmallow icing applicake pudding marzipan. Powder cupcake applicake. Carrot cake donut jelly tart carrot cake sweet roll donut tootsie roll chupa chups jelly. Chocolate candy fruitcake chocolate jujubes ice.', :type => 'wap_push').text_valid?.must_equal true
+          Mobitex::Message.new('48123456789', 'Chocolate cake marshmallow icing applicake pudding marzipan|http://Powder cupcake applicake. Carrot cake donut jelly tart carrot cake sweet roll donut tootsie roll chupa chups jelly. Chocolate candy fruitcake chocolate roll', :type => 'wap_push').text_valid?.must_equal true
         end
       end
 
       describe 'with 225-or-less-character string containing double characters' do
         it 'returns true' do
-          Mobitex::Message.new('48123456789', '[Chocolate] ~cake ^marshmallow {icing} applicake|pudding \\marzipan. Powder cupcake applicake. Carrot cake donut jelly tart carrot cake sweet roll donut tootsie roll chupa chups jelly. Chocolate candy fruitcake carrot.', :type => 'wap_push').text_valid?.must_equal true
+          Mobitex::Message.new('48123456789', '[Chocolate] ~cake ^marshmallow {icing} applicake|http://pudding \\marzipan. Powder cupcake applicake. Carrot cake donut jelly tart carrot cake sweet roll donut tootsie roll chupa chups jelly. Chocolate candy fruitcake.', :type => 'wap_push').text_valid?.must_equal true
+        end
+      end
+
+      describe 'with short link without title' do
+        it 'returns false' do
+          Mobitex::Message.new('48123456789', 'http://example.com/no-title', :type => 'wap_push').text_valid?.must_equal false
+        end
+      end
+
+      describe 'with short title and no link' do
+        it 'returns false' do
+          Mobitex::Message.new('48123456789', 'Link description', :type => 'wap_push').text_valid?.must_equal false
+        end
+      end
+
+      describe 'with broken link' do
+        it 'returns false' do
+          Mobitex::Message.new('48123456789', 'Link description|ftp://example.com', :type => 'wap_push').text_valid?.must_equal false
         end
       end
 
