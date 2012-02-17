@@ -52,6 +52,10 @@ module Mobitex
 
     # Validations
 
+    def valid?
+      type_valid? && number_valid? && text_valid? && from_valid? && ext_id_valid?
+    end
+
     def type_valid?
       TYPES.include?(type.to_s)
     end

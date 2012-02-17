@@ -171,13 +171,13 @@ describe Mobitex::Message do
     end
 
     describe 'for wap_push message' do
-      describe 'with short link and title' do
+      describe 'with link and title' do
         it 'returns true' do
           Mobitex::Message.new('48123456789', 'Link description|http://example.com/spam-n-ham').text_valid?.must_equal true
         end
       end
 
-      describe 'with short secure link and title' do
+      describe 'with secure link and title' do
         it 'returns true' do
           Mobitex::Message.new('48123456789', 'Link description|https://example.com/spam-n-ham').text_valid?.must_equal true
         end
@@ -195,13 +195,13 @@ describe Mobitex::Message do
         end
       end
 
-      describe 'with short link without title' do
+      describe 'with link without title' do
         it 'returns false' do
           Mobitex::Message.new('48123456789', 'http://example.com/no-title', :type => 'wap_push').text_valid?.must_equal false
         end
       end
 
-      describe 'with short title and no link' do
+      describe 'with title and no link' do
         it 'returns false' do
           Mobitex::Message.new('48123456789', 'Link description', :type => 'wap_push').text_valid?.must_equal false
         end
