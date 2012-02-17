@@ -3,4 +3,4 @@ require 'minitest/autorun'
 require 'webmock/minitest'
 require 'mobitex'
 require 'mobitex/minitest'
-require 'turn'
+begin; require 'turn/autorun'; rescue LoadError; end

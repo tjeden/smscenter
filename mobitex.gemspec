@@ -17,6 +17,5 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency 'minitest', ['>= 2.0.0']
   gem.add_development_dependency 'rake'
-  gem.add_development_dependency 'turn'
   gem.add_development_dependency 'webmock'
 end
