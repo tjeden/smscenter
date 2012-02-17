@@ -11,6 +11,7 @@ module Mobitex
     WAP_PUSH_REGEXP          = /\S+\|https?\:\/\//
     DOUBLE_CHARACTERS        = '[]~^{}|\\'.freeze
     MAX_LENGTH               = {'sms' => 160, 'sms_flash' => 160, 'concat' => 459, 'wap_push' => 225, 'binary' => 280}.freeze
+    NON_WHITESPACE_REGEXP    = %r![^\s#{[0x3000].pack("U")}]!
 
     attr_accessor :type, :number, :text, :from, :ext_id
     alias :to  :number
@@ -65,7 +66,7 @@ module Mobitex
     end
 
     def text_valid?
-      length > 0 && length <= MAX_LENGTH[type] && !!(text =~ /[^[:space:]]/) && (type != 'wap_push' || !!(text =~ WAP_PUSH_REGEXP))
+      length > 0 && length <= MAX_LENGTH[type] && !!(text =~ NON_WHITESPACE_REGEXP) && (type != 'wap_push' || !!(text =~ WAP_PUSH_REGEXP))
     end
 
     def from_valid?
