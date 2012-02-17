@@ -11,22 +11,8 @@ module Mobitex
     DOUBLE_CHARACTERS        = '[]~^{}|\\'.freeze
 
     attr_accessor :type, :number, :text, :from, :ext_id
-
-    def self.type_valid?(type)
-      TYPES.include?(type.to_s)
-    end
-
-    def self.number_valid?(number)
-      !!(number.to_s =~ NUMBER_REGEXP)
-    end
-
-    def self.from_valid?(from)
-      !!(from.to_s =~ FROM_REGEXP)
-    end
-
-    def self.ext_id_valid?(ext_id)
-      !!(ext_id.to_s =~ EXT_ID_REGEXP)
-    end
+    alias :to  :number
+    alias :to= :number=
 
     def initialize(number, text = '', options = {})
       self.number = number
@@ -44,7 +30,7 @@ module Mobitex
       text.length + text.count(DOUBLE_CHARACTERS)
     end
 
-    def from
+    def sanitized_from
       if @from.is_a?(Numeric) || @from =~ /^\d+$/
         @from.to_s[0...16]
       else
@@ -60,6 +46,34 @@ module Mobitex
           :from   => from,
           :ext_id => ext_id
       }
+    end
+
+    # Validations
+
+    def type_valid?
+      TYPES.include?(type.to_s)
+    end
+
+    def number_valid?
+      !!(number.to_s =~ NUMBER_REGEXP)
+    end
+
+    def from_valid?
+      !!(from.to_s =~ FROM_REGEXP)
+    end
+
+    def ext_id_valid?
+      !!(ext_id.to_s =~ EXT_ID_REGEXP)
+    end
+
+    def text_valid?
+      case type
+        when 'concat'    then ''
+        when 'sms_flash' then ''
+        when 'wap_push'  then ''
+        when 'binary'    then ''
+        else ''
+      end
     end
 
   end
