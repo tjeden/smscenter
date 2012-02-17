@@ -9,6 +9,7 @@ module Mobitex
     EXT_ID_CHARACTERS        = '!@#$%^&*()_+-={}|[]:<>'.freeze
     EXT_ID_REGEXP            = Regexp.new('^[a-zA-Z0-9' + Regexp.escape(EXT_ID_CHARACTERS) + ']{0,50}$').freeze
     DOUBLE_CHARACTERS        = '[]~^{}|\\'.freeze
+    MAX_LENGTH               = {'sms' => 160, 'sms_flash' => 160, 'concat' => 459, 'wap_push' => 225, 'binary' => 280}.freeze
 
     attr_accessor :type, :number, :text, :from, :ext_id
     alias :to  :number
@@ -58,22 +59,16 @@ module Mobitex
       !!(number.to_s =~ NUMBER_REGEXP)
     end
 
+    def text_valid?
+      length > 0 && length <= MAX_LENGTH[type] && !!(text =~ /[^[:space:]]/)
+    end
+
     def from_valid?
       !!(from.to_s =~ FROM_REGEXP)
     end
 
     def ext_id_valid?
       !!(ext_id.to_s =~ EXT_ID_REGEXP)
-    end
-
-    def text_valid?
-      case type
-        when 'concat'    then ''
-        when 'sms_flash' then ''
-        when 'wap_push'  then ''
-        when 'binary'    then ''
-        else ''
-      end
     end
 
   end

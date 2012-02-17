@@ -93,6 +93,142 @@ describe Mobitex::Message do
     end
   end
 
+  describe '.text_valid?' do
+    describe 'with empty text' do
+      it 'returns false' do
+        Mobitex::Message.new('48123456789', '').text_valid?.must_equal false
+      end
+    end
+
+    describe 'with blank text' do
+      it 'returns false' do
+        Mobitex::Message.new('48123456789', ' ').text_valid?.must_equal false
+        Mobitex::Message.new('48123456789', "\t").text_valid?.must_equal false
+        Mobitex::Message.new('48123456789', "\t \r \n \r\n \n\r").text_valid?.must_equal false
+      end
+    end
+
+    describe 'for sms or sms_flash message' do
+      describe 'with 160-or-less-character string' do
+        it 'returns true' do
+          Mobitex::Message.new('48123456789', 'Really short message', :type => 'sms').text_valid?.must_equal true
+          Mobitex::Message.new('48123456789', 'Really short message', :type => 'sms_flash').text_valid?.must_equal true
+        end
+      end
+
+      describe 'with 160-or-less-character string containing double characters' do
+        it 'returns true' do
+          Mobitex::Message.new('48123456789', '[Some] ~short ^text {containing} |double \\characters', :type => 'sms').text_valid?.must_equal true
+          Mobitex::Message.new('48123456789', '[Some] ~short ^text {containing} |double \\characters', :type => 'sms_flash').text_valid?.must_equal true
+        end
+      end
+
+      describe 'with 161-or-more-character string' do
+        it 'returns false' do
+          Mobitex::Message.new('48123456789', 'Chocolate cake marshmallow icing applicake pudding marzipan. Powder cupcake applicake. Carrot cake donut jelly tart carrot cake sweet roll donut tootsie roll chupa chups jelly. Chocolate candy fruitcake chocolate jujubes ice cream chocolate. Tart halvah faworki tiramisu souffle tiramisu jelly marshmallow. Toffee donut chupa chups powder souffle gingerbread jelly-o wafer chocolate cake. Cake wafer caramels chupa chups jelly carrot cake sweet powder tart.', :type => 'sms').text_valid?.must_equal false
+          Mobitex::Message.new('48123456789', 'Chocolate cake marshmallow icing applicake pudding marzipan. Powder cupcake applicake. Carrot cake donut jelly tart carrot cake sweet roll donut tootsie roll chupa chups jelly. Chocolate candy fruitcake chocolate jujubes ice cream chocolate. Tart halvah faworki tiramisu souffle tiramisu jelly marshmallow. Toffee donut chupa chups powder souffle gingerbread jelly-o wafer chocolate cake. Cake wafer caramels chupa chups jelly carrot cake sweet powder tart.', :type => 'sms_flash').text_valid?.must_equal false
+        end
+      end
+
+      describe 'with 160-character string containing double characters' do
+        it 'returns false' do
+          text = 'This text has length of 160 characters but it contains double symbols (like [, ], ~ or |) so it exceeds message maximum length and cannot be sent as normal sms.'
+
+          text.length.must_equal 160
+          Mobitex::Message.new('48123456789', text, :type => 'sms').text_valid?.must_equal false
+          Mobitex::Message.new('48123456789', text, :type => 'sms_flash').text_valid?.must_equal false
+        end
+      end
+    end
+
+    describe 'for concat message' do
+      describe 'with 459-or-less-character string' do
+        it 'returns true' do
+          Mobitex::Message.new('48123456789', 'Chocolate cake marshmallow icing applicake pudding marzipan. Powder cupcake applicake. Carrot cake donut jelly tart carrot cake sweet roll donut tootsie roll chupa chups jelly. Chocolate candy fruitcake chocolate jujubes ice cream chocolate. Tart halvah faworki tiramisu souffle tiramisu jelly marshmallow. Toffee donut chupa chups powder souffle gingerbread jelly-o wafer chocolate cake. Cake wafer caramels chupa chups jelly carrot cake sweet powder tart...', :type => 'concat').text_valid?.must_equal true
+        end
+      end
+
+      describe 'with 459-or-less-character string containing double characters' do
+        it 'returns true' do
+          Mobitex::Message.new('48123456789', '[Chocolate] ~cake ^marshmallow {icing} applicake|pudding \\marzipan. Powder cupcake applicake. Carrot cake donut jelly tart carrot cake sweet roll donut tootsie roll chupa chups jelly. Chocolate candy fruitcake chocolate jujubes ice cream chocolate. Tart halvah faworki tiramisu souffle tiramisu jelly marshmallow. Toffee donut chupa chups powder souffle gingerbread jelly-o wafer chocolate cake. Cake wafer caramels chupa chups jelly carrot cake sweet', :type => 'concat').text_valid?.must_equal true
+        end
+      end
+
+      describe 'with 460-or-more-character string' do
+        it 'returns false' do
+          Mobitex::Message.new('48123456789', 'Chocolate cake marshmallow icing applicake pudding marzipan. Powder cupcake applicake. Carrot cake donut jelly tart carrot cake sweet roll donut tootsie roll chupa chups jelly. Chocolate candy fruitcake chocolate jujubes ice cream chocolate. Tart halvah faworki tiramisu souffle tiramisu jelly marshmallow. Toffee donut chupa chups powder souffle gingerbread jelly-o wafer chocolate cake. Cake wafer caramels chupa chups jelly carrot cake sweet powder tart... Chocolate cake marshmallow icing applicake pudding marzipan. Powder cupcake applicake. Carrot cake donut jelly tart carrot cake sweet roll donut tootsie roll chupa chups jelly. Chocolate candy fruitcake chocolate jujubes ice cream chocolate. Tart halvah faworki tiramisu souffle tiramisu jelly marshmallow. Toffee donut chupa chups powder souffle gingerbread jelly-o wafer chocolate cake. Cake wafer caramels chupa chups jelly carrot cake sweet powder tart...', :type => 'concat').text_valid?.must_equal false
+        end
+      end
+
+      describe 'with 459-character string containing double characters' do
+        it 'returns false' do
+          text = 'This text has length of 459 characters but it contains double symbols (like [brackets], ~tilde, ^caret, {curly braces}, |pipe or \\backslash) so it exceeds message maximum length for concat message. Chocolate cake marshmallow icing applicake pudding marzipan. Powder cupcake applicake. Carrot cake donut jelly tart carrot cake sweet roll donut tootsie roll chupa chups jelly. Chocolate candy fruitcake chocolate jujubes ice cream chocolate. Tart halvah faworki'
+
+          text.length.must_equal 459
+          Mobitex::Message.new('48123456789', text, :type => 'concat').text_valid?.must_equal false
+        end
+      end
+    end
+
+    describe 'for wap_push message' do
+      describe 'with 225-or-less-character string' do
+        it 'returns true' do
+          Mobitex::Message.new('48123456789', 'Chocolate cake marshmallow icing applicake pudding marzipan. Powder cupcake applicake. Carrot cake donut jelly tart carrot cake sweet roll donut tootsie roll chupa chups jelly. Chocolate candy fruitcake chocolate jujubes ice.', :type => 'wap_push').text_valid?.must_equal true
+        end
+      end
+
+      describe 'with 225-or-less-character string containing double characters' do
+        it 'returns true' do
+          Mobitex::Message.new('48123456789', '[Chocolate] ~cake ^marshmallow {icing} applicake|pudding \\marzipan. Powder cupcake applicake. Carrot cake donut jelly tart carrot cake sweet roll donut tootsie roll chupa chups jelly. Chocolate candy fruitcake carrot.', :type => 'wap_push').text_valid?.must_equal true
+        end
+      end
+
+      describe 'with 226-or-more-character string' do
+        it 'returns false' do
+          Mobitex::Message.new('48123456789', 'Chocolate cake marshmallow icing applicake pudding marzipan. Powder cupcake applicake. Carrot cake donut jelly tart carrot cake sweet roll donut tootsie roll chupa chups jelly. Chocolate candy fruitcake chocolate jujubes ice cream chocolate. Tart halvah faworki tiramisu souffle tiramisu jelly marshmallow. Toffee donut chupa chups powder souffle gingerbread jelly-o wafer chocolate cake. Cake wafer caramels chupa chups jelly carrot cake sweet powder tart... Chocolate cake marshmallow icing applicake pudding marzipan. Powder cupcake applicake. Carrot cake donut jelly tart carrot cake sweet roll donut tootsie roll chupa chups jelly. Chocolate candy fruitcake chocolate jujubes ice cream chocolate. Tart halvah faworki tiramisu souffle tiramisu jelly marshmallow. Toffee donut chupa chups powder souffle gingerbread jelly-o wafer chocolate cake. Cake wafer caramels chupa chups jelly carrot cake sweet powder tart...', :type => 'wap_push').text_valid?.must_equal false
+        end
+      end
+
+      describe 'with 225-character string containing double characters' do
+        it 'returns false' do
+          text = 'This text has length of 225 characters but it contains double symbols (like [brackets], ~tilde, ^caret, {curly braces}, |pipe or \\backslash) so it exceeds message maximum length for concat message. Chocolate cake marshmallow.'
+
+          text.length.must_equal 225
+          Mobitex::Message.new('48123456789', text, :type => 'wap_push').text_valid?.must_equal false
+        end
+      end
+    end
+
+    describe 'for binary message' do
+      describe 'with 280-or-less-character string' do
+        it 'returns true' do
+          Mobitex::Message.new('48123456789', 'Chocolate cake marshmallow icing applicake pudding marzipan. Powder cupcake applicake. Carrot cake donut jelly tart carrot cake sweet roll donut tootsie roll chupa chups jelly. Chocolate candy fruitcake chocolate jujubes ice cream chocolate. Tart halvah faworki tiramisu souffle..', :type => 'binary').text_valid?.must_equal true
+        end
+      end
+
+      describe 'with 280-or-less-character string containing double characters' do
+        it 'returns true' do
+          Mobitex::Message.new('48123456789', '[Chocolate] ~cake ^marshmallow {icing} applicake|pudding \\marzipan. Powder cupcake applicake. Carrot cake donut jelly tart carrot cake sweet roll donut tootsie roll chupa chups jelly. Chocolate candy fruitcake chocolate jujubes ice cream chocolate. Tart halvah faworki....', :type => 'binary').text_valid?.must_equal true
+        end
+      end
+
+      describe 'with 281-or-more-character string' do
+        it 'returns false' do
+          Mobitex::Message.new('48123456789', 'Chocolate cake marshmallow icing applicake pudding marzipan. Powder cupcake applicake. Carrot cake donut jelly tart carrot cake sweet roll donut tootsie roll chupa chups jelly. Chocolate candy fruitcake chocolate jujubes ice cream chocolate. Tart halvah faworki tiramisu souffle tiramisu jelly marshmallow. Toffee donut chupa chups powder souffle gingerbread jelly-o wafer chocolate cake. Cake wafer caramels chupa chups jelly carrot cake sweet powder tart... Chocolate cake marshmallow icing applicake pudding marzipan. Powder cupcake applicake. Carrot cake donut jelly tart carrot cake sweet roll donut tootsie roll chupa chups jelly. Chocolate candy fruitcake chocolate jujubes ice cream chocolate. Tart halvah faworki tiramisu souffle tiramisu jelly marshmallow. Toffee donut chupa chups powder souffle gingerbread jelly-o wafer chocolate cake. Cake wafer caramels chupa chups jelly carrot cake sweet powder tart...', :type => 'binary').text_valid?.must_equal false
+        end
+      end
+
+      describe 'with 280-character string containing double characters' do
+        it 'returns false' do
+          text = 'This text has length of 280 characters but it contains double symbols (like [brackets], ~tilde, ^caret, {curly braces}, |pipe or \\backslash) so it exceeds message maximum length for concat message. Chocolate cake marshmallow icing applicake pudding marzipan. Powder cupcake carrot'
+
+          text.length.must_equal 280
+          Mobitex::Message.new('48123456789', text, :type => 'binary').text_valid?.must_equal false
+        end
+      end
+    end
+  end
+
   describe '.from_valid?' do
     describe 'with 16-or-less-digit number' do
       it 'returns true' do
@@ -154,7 +290,7 @@ describe Mobitex::Message do
     describe 'with 50-or-less-character string' do
       it 'returns true' do
         Mobitex::Message.new('48123456789', 'Text', :ext_id => 'SomeId').ext_id_valid?.must_equal true
-        Mobitex::Message.new('48123456789', 'Text', :ext_id => 'Some{More}Sophisticated(Id)[12345]').ext_id_valid?.must_equal true
+        Mobitex::Message.new('48123456789', 'Text', :ext_id => '$Some!{More}<Sophisticated>(_Id_)-[12345]').ext_id_valid?.must_equal true
       end
     end
 
