@@ -19,19 +19,19 @@ describe Mobitex::Message do
       single_characters = 'Short message'
       double_characters = '[square brackets] ~tilde ^caret {curly braces} |pipe \\backslash'
 
-      assert single_characters.length.must_equal 13
-      assert Mobitex::Message.new('48123456789', single_characters).length.must_equal 13
+      single_characters.length.must_equal 13
+      Mobitex::Message.new('48123456789', single_characters).length.must_equal 13
 
-      assert double_characters.length.must_equal 63
-      assert Mobitex::Message.new('48123456789', double_characters).length.must_equal 71
+      double_characters.length.must_equal 63
+      Mobitex::Message.new('48123456789', double_characters).length.must_equal 71
     end
   end
 
   describe '.from' do
     it 'returns sanitized from field' do
-      assert Mobitex::Message.new('48123456789', 'Text', :from => 4812345678901234567890).sanitized_from.must_equal '4812345678901234'
-      assert Mobitex::Message.new('48123456789', 'Text', :from => '4812345678901234567890').sanitized_from.must_equal '4812345678901234'
-      assert Mobitex::Message.new('48123456789', 'Text', :from => 'Egg, Bacon, Spam, Baked Beans, Spam, Sausage and Spam').sanitized_from.must_equal 'Egg, Bacon,'
+      Mobitex::Message.new('48123456789', 'Text', :from => 4812345678901234567890).sanitized_from.must_equal '4812345678901234'
+      Mobitex::Message.new('48123456789', 'Text', :from => '4812345678901234567890').sanitized_from.must_equal '4812345678901234'
+      Mobitex::Message.new('48123456789', 'Text', :from => 'Egg, Bacon, Spam, Baked Beans, Spam, Sausage and Spam').sanitized_from.must_equal 'Egg, Bacon,'
     end
   end
 
@@ -40,10 +40,10 @@ describe Mobitex::Message do
       message = Mobitex::Message.new('481234567890', 'No big deal', :from => 'Me to you', :ext_id => '123')
       params  = message.to_params
 
-      assert params[:number].must_equal '481234567890'
-      assert params[:text].must_equal   'No big deal'
-      assert params[:from].must_equal   'Me to you'
-      assert params[:ext_id].must_equal '123'
+      params[:number].must_equal '481234567890'
+      params[:text].must_equal   'No big deal'
+      params[:from].must_equal   'Me to you'
+      params[:ext_id].must_equal '123'
     end
   end
 
