@@ -47,6 +47,24 @@ describe Mobitex::Message do
     end
   end
 
+  describe '.valid?' do
+    describe 'with valid type, number, text, from and ext_id' do
+      it 'returns true' do
+        Mobitex::Message.new('48123456789', 'Egg, Bacon, Spam', :type => 'sms', :from => 'SpamNHam', :ext_id => '1').valid?.must_equal true
+      end
+    end
+
+    describe 'with invalid type, number, text, from or ext_id' do
+      it 'returns false' do
+        Mobitex::Message.new('48123456789', 'Egg, Bacon, Spam', :type => 'message', :from => 'SpamNHam', :ext_id => '1').valid?.must_equal false
+        Mobitex::Message.new('+48123456789', 'Egg, Bacon, Spam', :type => 'sms', :from => 'SpamNHam', :ext_id => '1').valid?.must_equal false
+        Mobitex::Message.new('48123456789', '', :type => 'sms', :from => 'SpamNHam', :ext_id => '1').valid?.must_equal false
+        Mobitex::Message.new('48123456789', 'Egg, Bacon, Spam', :type => 'sms', :from => 'VeryLongSender', :ext_id => '1').valid?.must_equal false
+        Mobitex::Message.new('48123456789', 'Egg, Bacon, Spam', :type => 'sms', :from => 'SpamNHam', :ext_id => '1 and 2').valid?.must_equal false
+      end
+    end
+  end
+
   describe '.type_valid?' do
     describe 'with supported message types' do
       it 'returns true' do
