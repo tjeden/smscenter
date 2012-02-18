@@ -1,16 +1,16 @@
 module Mobitex
 
   class Message
-    TYPES                    = %w(sms concat sms_flash wap_push binary).freeze
-    NUMBER_REGEXP            = /^\d{11}$/.freeze
-    NUMERIC_FROM_REGEXP      = /^\d{1,16}$/.freeze
-    ALPHANUMERIC_FROM_REGEXP = /^[a-zA-Z0-9]{1,11}$/.freeze
-    FROM_REGEXP              = Regexp.union(NUMERIC_FROM_REGEXP, ALPHANUMERIC_FROM_REGEXP).freeze
-    EXT_ID_CHARACTERS        = '!@#$%^&*()_+-={}|[]:<>'.freeze
-    EXT_ID_REGEXP            = Regexp.new('^[a-zA-Z0-9' + Regexp.escape(EXT_ID_CHARACTERS) + ']{0,50}$').freeze
+    TYPES                    = %w(sms concat sms_flash wap_push binary)
+    NUMBER_REGEXP            = /^\d{11}$/
+    NUMERIC_FROM_REGEXP      = /^\d{1,16}$/
+    ALPHANUMERIC_FROM_REGEXP = /^[a-zA-Z0-9]{1,11}$/
+    FROM_REGEXP              = Regexp.union(NUMERIC_FROM_REGEXP, ALPHANUMERIC_FROM_REGEXP)
+    EXT_ID_CHARACTERS        = '!@#$%^&*()_+-={}|[]:<>'
+    EXT_ID_REGEXP            = Regexp.new('^[a-zA-Z0-9' + Regexp.escape(EXT_ID_CHARACTERS) + ']{0,50}$')
     WAP_PUSH_REGEXP          = /\S+\|https?\:\/\//
-    DOUBLE_CHARACTERS        = '[]~^{}|\\'.freeze
-    MAX_LENGTH               = {'sms' => 160, 'sms_flash' => 160, 'concat' => 459, 'wap_push' => 225, 'binary' => 280}.freeze
+    DOUBLE_CHARACTERS        = '[]~^{}|\\'
+    MAX_LENGTH               = {'sms' => 160, 'sms_flash' => 160, 'concat' => 459, 'wap_push' => 225, 'binary' => 280}
     NON_WHITESPACE_REGEXP    = %r![^\s#{[0x3000].pack("U")}]!
 
     attr_accessor :type, :number, :text, :from, :ext_id
