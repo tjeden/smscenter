@@ -37,9 +37,10 @@ describe Mobitex::Message do
 
   describe '.to_params' do
     it 'returns Hash representation of the object' do
-      message = Mobitex::Message.new('481234567890', 'No big deal', :from => 'Me to you', :ext_id => '123')
+      message = Mobitex::Message.new('481234567890', 'No big deal', :type => 'sms_flash', :from => 'Me to you', :ext_id => '123')
       params  = message.to_params
 
+      params[:type].must_equal   'sms_flash'
       params[:number].must_equal '481234567890'
       params[:text].must_equal   'No big deal'
       params[:from].must_equal   'Me to you'
