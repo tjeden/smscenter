@@ -10,7 +10,7 @@ module Mobitex
     ALPHANUMERIC_FROM_REGEXP = /^[a-zA-Z0-9]{1,11}$/
     FROM_REGEXP              = Regexp.union(NUMERIC_FROM_REGEXP, ALPHANUMERIC_FROM_REGEXP)
     EXT_ID_CHARACTERS        = '!@#$%^&*()_+-={}|[]:<>'
-    EXT_ID_REGEXP            = Regexp.new('^[a-zA-Z0-9' + Regexp.escape(EXT_ID_CHARACTERS) + ']{0,50}$')
+    EXT_ID_REGEXP            = %r!^[a-zA-Z0-9#{Regexp.escape(EXT_ID_CHARACTERS)}]{0,50}$!o
     WAP_PUSH_REGEXP          = /\S+\|https?\:\/\//
     DOUBLE_CHARACTERS        = '[]~^{}|\\'
     MAX_LENGTH               = {'sms' => 160, 'sms_flash' => 160, 'concat' => 459, 'wap_push' => 225, 'binary' => 280}
