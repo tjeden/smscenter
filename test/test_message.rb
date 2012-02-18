@@ -94,6 +94,14 @@ describe Mobitex::Message do
       end
     end
 
+    describe 'with comma-delimited list of 11-digit numbers' do
+      it 'returns true' do
+        Mobitex::Message.new('48123456789,11223344556', 'Text').number_valid?.must_equal true
+        Mobitex::Message.new('48123456789,09876543210,11223344556', 'Text').number_valid?.must_equal true
+        Mobitex::Message.new('48123456789,09876543210,11223344556,99887766554,10293847565', 'Text').number_valid?.must_equal true
+      end
+    end
+
     describe 'with number not containing country code' do
       it 'returns false' do
         Mobitex::Message.new('123456789', 'Text').number_valid?.must_equal false
@@ -107,6 +115,27 @@ describe Mobitex::Message do
         Mobitex::Message.new('48 123 456 789', 'Text').number_valid?.must_equal false
         Mobitex::Message.new('09 876-54-32-10', 'Text').number_valid?.must_equal false
         Mobitex::Message.new('(11) 223344556', 'Text').number_valid?.must_equal false
+      end
+    end
+
+    describe 'with comma-delimited list of 11-digit numbers containing invalid numbers' do
+      it 'returns false' do
+        Mobitex::Message.new('48123456789').number_valid?.must_equal true
+        Mobitex::Message.new('48123456789,09876543210').number_valid?.must_equal true
+        Mobitex::Message.new('48123456789,0987654321').number_valid?.must_equal false
+        Mobitex::Message.new('48123456789,09876-543-210').number_valid?.must_equal false
+      end
+    end
+
+    describe 'with comma-delimited 501-or-more-element list of 11-digit numbers' do
+      it 'returns false' do
+        numbers = ['48123456789', '09876543210', '11223344556', '99887766554', '10293847565'] * 100
+        too_many_numbers = numbers + [numbers[0]]
+
+        numbers.size.must_equal 500
+        too_many_numbers.size.must_equal 501
+        Mobitex::Message.new(numbers.join(','), 'Text').number_valid?.must_equal true
+        Mobitex::Message.new(too_many_numbers.join(','), 'Text').number_valid?.must_equal false
       end
     end
   end

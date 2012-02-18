@@ -3,6 +3,9 @@ module Mobitex
   class Message
     TYPES                    = %w(sms concat sms_flash wap_push binary)
     NUMBER_REGEXP            = /^\d{11}$/
+    BULK_DELIMITER           = ','
+    BULK_LIMIT               = 500
+    BULK_NUMBER_REGEXP       = %r!^(\d{11}#{Regexp.escape(BULK_DELIMITER)}){0,#{BULK_LIMIT - 1}}\d{11}$!o
     NUMERIC_FROM_REGEXP      = /^\d{1,16}$/
     ALPHANUMERIC_FROM_REGEXP = /^[a-zA-Z0-9]{1,11}$/
     FROM_REGEXP              = Regexp.union(NUMERIC_FROM_REGEXP, ALPHANUMERIC_FROM_REGEXP)
@@ -62,7 +65,7 @@ module Mobitex
     end
 
     def number_valid?
-      !!(number.to_s =~ NUMBER_REGEXP)
+      !!(number.to_s =~ BULK_NUMBER_REGEXP)
     end
 
     def text_valid?
