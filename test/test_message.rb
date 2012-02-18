@@ -47,6 +47,59 @@ describe Mobitex::Message do
     end
   end
 
+  describe '.errors' do
+    describe 'for unvalidated message' do
+      it 'returns empty Set' do
+        Mobitex::Message.new('48123456789', 'Egg, Bacon, Spam', :type => 'sms', :from => 'SpamNHam', :ext_id => '1').errors.must_equal Set.new
+      end
+    end
+
+    describe 'for validated message' do
+      describe 'with valid type, number, text, from and ext_id' do
+        it 'returns true' do
+          message = Mobitex::Message.new('48123456789', 'Egg, Bacon, Spam', :type => 'sms', :from => 'SpamNHam', :ext_id => '1')
+
+          message.valid?.must_equal true
+          message.errors.must_equal Set.new
+        end
+      end
+
+      describe 'with one invalid field' do
+        it 'returns Set containing symbol of invalid field' do
+          Mobitex::Message.new('48123456789', 'Egg, Bacon, Spam', :type => 'message', :from => 'SpamNHam', :ext_id => '1').tap(&:valid?).errors.must_equal Set.new([:type])
+          Mobitex::Message.new('+48123456789', 'Egg, Bacon, Spam', :type => 'sms', :from => 'SpamNHam', :ext_id => '1').tap(&:valid?).errors.must_equal Set.new([:number])
+          Mobitex::Message.new('48123456789', '', :type => 'sms', :from => 'SpamNHam', :ext_id => '1').tap(&:valid?).errors.must_equal Set.new([:text])
+          Mobitex::Message.new('48123456789', 'Egg, Bacon, Spam', :type => 'sms', :from => 'VeryLongSender', :ext_id => '1').tap(&:valid?).errors.must_equal Set.new([:from])
+          Mobitex::Message.new('48123456789', 'Egg, Bacon, Spam', :type => 'sms', :from => 'SpamNHam', :ext_id => '1 and 2').tap(&:valid?).errors.must_equal Set.new([:ext_id])
+        end
+      end
+
+      describe 'with multiple invalid fields' do
+        it 'returns Set containing symbols of invalid fields' do
+          Mobitex::Message.new('48123456789', 'Egg, Bacon, Spam', :type => 'message', :from => 'SpamNHam', :ext_id => '1').tap(&:valid?).errors.must_equal Set.new([:type])
+          Mobitex::Message.new('+48123456789', 'Egg, Bacon, Spam', :type => 'message', :from => 'SpamNHam', :ext_id => '1').tap(&:valid?).errors.must_equal Set.new([:type, :number])
+          Mobitex::Message.new('+48123456789', '', :type => 'message', :from => 'message', :ext_id => '1').tap(&:valid?).errors.must_equal Set.new([:type, :number, :text])
+          Mobitex::Message.new('+48123456789', '', :type => 'message', :from => 'VeryLongSender', :ext_id => '1').tap(&:valid?).errors.must_equal Set.new([:type, :number, :text, :from])
+          Mobitex::Message.new('+48123456789', '', :type => 'message', :from => 'VeryLongSender', :ext_id => '1 and 2').tap(&:valid?).errors.must_equal Set.new([:type, :number, :text, :from, :ext_id])
+        end
+      end
+    end
+  end
+
+  describe '.invalid?' do
+    describe 'with valid message' do
+      it 'returns false' do
+        Mobitex::Message.new('48123456789', 'Egg, Bacon, Spam', :type => 'sms', :from => 'SpamNHam', :ext_id => '1').invalid?.must_equal false
+      end
+    end
+
+    describe 'with invalid message' do
+      it 'returns true' do
+        Mobitex::Message.new('48123456789', 'Egg, Bacon, Spam', :type => 'sms', :from => 'SpamNHam', :ext_id => '1 and 2').invalid?.must_equal true
+      end
+    end
+  end
+
   describe '.valid?' do
     describe 'with valid type, number, text, from and ext_id' do
       it 'returns true' do

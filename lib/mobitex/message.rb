@@ -14,6 +14,7 @@ module Mobitex
     WAP_PUSH_REGEXP          = /\S+\|https?\:\/\//
     DOUBLE_CHARACTERS        = '[]~^{}|\\'
     MAX_LENGTH               = {'sms' => 160, 'sms_flash' => 160, 'concat' => 459, 'wap_push' => 225, 'binary' => 280}
+    MAX_LENGTH.default       = -1
     NON_WHITESPACE_REGEXP    = %r![^\s#{[0x3000].pack("U")}]!
 
     attr_accessor :type, :number, :text, :from, :ext_id
@@ -56,8 +57,17 @@ module Mobitex
 
     # Validations
 
+    def errors
+      @errors ||= Set.new
+    end
+
+    def invalid?
+      !valid?
+    end
+
     def valid?
-      type_valid? && number_valid? && text_valid? && from_valid? && ext_id_valid?
+      errors.clear
+      validate!
     end
 
     def type_valid?
@@ -69,7 +79,8 @@ module Mobitex
     end
 
     def text_valid?
-      length > 0 && length <= MAX_LENGTH[type] && !(text !~ NON_WHITESPACE_REGEXP) && (type != 'wap_push' || !(text !~ WAP_PUSH_REGEXP))
+      (!type_valid? && !(text !~ NON_WHITESPACE_REGEXP)) || # We can't determine validity of text if type is invalid
+          (length > 0 && length <= MAX_LENGTH[type] && !(text !~ NON_WHITESPACE_REGEXP) && (type != 'wap_push' || !(text !~ WAP_PUSH_REGEXP)))
     end
 
     def from_valid?
@@ -78,6 +89,17 @@ module Mobitex
 
     def ext_id_valid?
       !(ext_id.to_s !~ EXT_ID_REGEXP)
+    end
+
+    protected
+
+    def validate!
+      errors << :type   unless type_valid?
+      errors << :number unless number_valid?
+      errors << :text   unless text_valid?
+      errors << :from   unless from_valid?
+      errors << :ext_id unless ext_id_valid?
+      errors.empty?
     end
 
   end
