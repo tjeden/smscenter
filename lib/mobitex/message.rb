@@ -65,19 +65,19 @@ module Mobitex
     end
 
     def number_valid?
-      !!(number.to_s =~ BULK_NUMBERS_REGEXP)
+      !(number.to_s !~ BULK_NUMBERS_REGEXP)
     end
 
     def text_valid?
-      length > 0 && length <= MAX_LENGTH[type] && !!(text =~ NON_WHITESPACE_REGEXP) && (type != 'wap_push' || !!(text =~ WAP_PUSH_REGEXP))
+      length > 0 && length <= MAX_LENGTH[type] && !(text !~ NON_WHITESPACE_REGEXP) && (type != 'wap_push' || !(text !~ WAP_PUSH_REGEXP))
     end
 
     def from_valid?
-      !!(from.to_s =~ FROM_REGEXP)
+      !(from.to_s !~ FROM_REGEXP)
     end
 
     def ext_id_valid?
-      !!(ext_id.to_s =~ EXT_ID_REGEXP)
+      !(ext_id.to_s !~ EXT_ID_REGEXP)
     end
 
   end
