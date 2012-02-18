@@ -1,3 +1,4 @@
+require 'mobitex/delivery'
 require 'mobitex/message'
 require 'mobitex/connection'
 require 'mobitex/delivery_errors'
