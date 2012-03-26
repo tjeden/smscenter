@@ -1,11 +1,26 @@
 require 'mobitex/message/configuration'
+require 'mobitex/message/patterns'
 
 module Mobitex
 
   class Message
+    include Patterns
+
     attr_accessor :delivery_handler
     attr_writer   *Configuration::VALID_OPTIONS
 
+    # Public: Set default values for Message attributes.
+    #
+    # Examples
+    #
+    #   Mobitex::Message.configure do |config|
+    #     config.body = 'My default body'
+    #   end
+    #
+    #   message = Mobitex::Message.new
+    #   message.body
+    #   # => 'My default body'
+    #
     def self.configure(&block)
       return unless block_given?
 
@@ -16,6 +31,25 @@ module Mobitex
       end
     end
 
+    # Public: Initialize a new Message.
+    #
+    # args  - Hash of attributes of the message.
+    # block - An optional block that can be used to build a new message using DSL-like syntax.
+    #
+    # Examples
+    #
+    #   message = Mobitex::Message.new(:to => '48123456789', :body => 'Hello!')
+    #
+    #   message = Mobitex::Message.new do
+    #     to   '48123456789'
+    #     body 'Hello!'
+    #   end
+    #
+    #   message = Mobitex::Message.new do |m|
+    #     m.to   = '48123456789'
+    #     m.body = 'Hello!'
+    #   end
+    #
     def initialize(*args, &block)
       @delivery_handler = nil
       @delivery_method  = Mobitex.delivery_method.dup
@@ -36,6 +70,15 @@ module Mobitex
       self
     end
 
+    # Generate special accessors that act like readers when called without an argument or like writers when called
+    # with argument.
+    #
+    # Examples
+    #
+    #   message = Mobitex::Message.new
+    #   message.body 'Hello!' # This is equivalent to `message.body = 'Hello!'`
+    #   message.body          # => 'Hello!'
+    #
     Configuration::VALID_OPTIONS.each do |key|
       define_method key do |*value|         # def from(*value)
         if value.first                      #   if value.first
@@ -45,6 +88,12 @@ module Mobitex
         end                                 #   end
       end                                   # end
     end
+
+    # Validation #######################################################################################################
+
+    # Sanitization #####################################################################################################
+
+    # Delivery #########################################################################################################
 
     def deliver
       if delivery_handler
