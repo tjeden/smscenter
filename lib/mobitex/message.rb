@@ -89,9 +89,45 @@ module Mobitex
       end                                   # end
     end
 
+    def length
+      body ? body.length + body.count(DOUBLE_CHARACTERS) : 0
+    end
+
     # Validation #######################################################################################################
 
-    # Sanitization #####################################################################################################
+    def errors
+      @errors ||= Set.new
+    end
+
+    def invalid?
+      !valid?
+    end
+
+    def valid?
+      errors.clear
+      validate!
+    end
+
+    def type_valid?
+      TYPES.include?(type.to_s)
+    end
+
+    def to_valid?
+      !(to.to_s !~ BULK_NUMBERS_REGEXP)
+    end
+
+    def body_valid?
+      (!type_valid? && !(body !~ NON_WHITESPACE_REGEXP)) || # We can't determine validity of body if type is invalid
+          (length > 0 && length <= MAX_LENGTH[type] && !(body !~ NON_WHITESPACE_REGEXP) && (type != 'wap_push' || !(body !~ WAP_PUSH_REGEXP)))
+    end
+
+    def from_valid?
+      !(from.to_s !~ FROM_REGEXP)
+    end
+
+    def message_id_valid?
+      !(message_id.to_s !~ MESSAGE_ID_REGEXP)
+    end
 
     # Delivery #########################################################################################################
 
@@ -118,6 +154,16 @@ module Mobitex
     end
 
     private
+
+    def validate!
+      errors << :type       unless type_valid?
+      errors << :to         unless to_valid?
+      errors << :body       unless body_valid?
+      errors << :from       unless from_valid?
+      errors << :message_id unless message_id_valid?
+
+      errors.empty?
+    end
 
     def inform_observers
       Mobitex.inform_observers(self)

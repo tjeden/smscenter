@@ -13,8 +13,8 @@ module Mobitex
       NUMERIC_FROM_REGEXP      = /^\d{1,16}$/
       ALPHANUMERIC_FROM_REGEXP = /^[a-zA-Z0-9]{1,11}$/
       FROM_REGEXP              = Regexp.union(NUMERIC_FROM_REGEXP, ALPHANUMERIC_FROM_REGEXP)
-      EXT_ID_CHARACTERS        = '!@#$%^&*()_+-={}|[]:<>'
-      EXT_ID_REGEXP            = %r!^[a-zA-Z0-9#{Regexp.escape(EXT_ID_CHARACTERS)}]{0,50}$!o
+      MESSAGE_ID_CHARACTERS    = '!@#$%^&*()_+-={}|[]:<>'
+      MESSAGE_ID_REGEXP        = %r!^[a-zA-Z0-9#{Regexp.escape(MESSAGE_ID_CHARACTERS)}]{0,50}$!o
       WAP_PUSH_REGEXP          = /\S+\|https?\:\/\//
       DOUBLE_CHARACTERS        = "[]~^{}|\\\r\n"
       STANDARD_CHARACTERS      = %q{@£$¥èéùìòÇØøÅå_^{}\[~]|ÆæßÉ!"#¤%&'()*+,-./:;<=>?ÄÖÑÜ§¿äöñüà }
