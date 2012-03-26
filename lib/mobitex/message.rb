@@ -48,7 +48,7 @@ module Mobitex
 
     def deliver
       if delivery_handler
-        delivery_handler.deliver_mail(self){ do_delivery }
+        delivery_handler.deliver_sms(self){ do_delivery }
       else
         do_delivery
       end
