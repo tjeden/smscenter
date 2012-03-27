@@ -3,6 +3,8 @@ require 'mobitex/connection'
 module Mobitex
 
   class HTTPDelivery
+    attr_accessor :settings
+    attr_reader   :response
 
     def initialize(values)
       self.settings = {
@@ -11,9 +13,9 @@ module Mobitex
       }.merge!(values)
     end
 
-    attr_accessor :settings
-
     def deliver!(message)
+      @response = nil
+
       message.sanitize!
 
       raw_response = connection.post('/send.php', {
@@ -25,6 +27,10 @@ module Mobitex
           :text   => message.body,
           :ext_id => message.message_id
       })
+
+      @response = raw_response
+
+      settings[:return_response] ? raw_response : self
     end
 
     private

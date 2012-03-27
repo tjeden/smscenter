@@ -151,24 +151,30 @@ module Mobitex
 
     def deliver
       if delivery_handler
-        delivery_handler.deliver_sms(self){ do_delivery }
+        delivery_handler.deliver_sms(self) { do_delivery }
       else
         do_delivery
       end
+
       inform_observers
+
       self
     end
 
     def deliver!
       response = delivery_method.deliver!(self)
+
       inform_observers
+
       delivery_method.settings[:return_response] ? response : self
     end
 
     def delivery_method(method = nil, settings = {})
-      return @delivery_method unless method
-
-      @delivery_method = Mobitex::Configuration.instance.lookup_delivery_method(method).new(settings)
+      if method
+        @delivery_method = Mobitex::Configuration.instance.lookup_delivery_method(method).new(settings)
+      else
+        @delivery_method
+      end
     end
 
     private
