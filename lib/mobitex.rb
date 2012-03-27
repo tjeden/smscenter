@@ -7,6 +7,17 @@ module Mobitex
     Mobitex::Message.new(*args, &block)
   end
 
+  # Public: Configure global options.
+  #
+  # Examples
+  #
+  #   Mobitex.configure do
+  #     delivery_method :http, {
+  #       :user => 'connectmed',
+  #       :pass => '56asd4Fgi'
+  #     }
+  #   end
+  #
   def self.configure(&block)
     return unless block_given?
 
