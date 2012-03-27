@@ -1,5 +1,7 @@
 require 'mobitex/configuration'
 require 'mobitex/message'
+require 'mobitex/response'
+require 'mobitex/status'
 
 module Mobitex
 

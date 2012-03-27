@@ -29,9 +29,9 @@ module Mobitex
           :ext_id => message.message_id
       })
 
-      @response = raw_response
+      @response = Response.parse(raw_response.body)
 
-      settings[:return_response] ? raw_response : self
+      settings[:return_response] ? @response : self
     end
 
     private
