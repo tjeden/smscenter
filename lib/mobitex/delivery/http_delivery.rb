@@ -8,8 +8,9 @@ module Mobitex
 
     def initialize(values)
       self.settings = {
-          :user => nil,
-          :pass => nil
+          :user            => nil,
+          :pass            => nil,
+          :return_response => false
       }.merge!(values)
     end
 
