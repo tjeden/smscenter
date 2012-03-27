@@ -145,6 +145,8 @@ module Mobitex
       else
         self.from = from.to_s.gsub(/[^a-zA-Z0-9]/, '')[0...11]
       end
+
+      self.to = [*to].flatten.map(&:to_s).join(BULK_DELIMITER)
     end
 
     # Delivery #########################################################################################################
