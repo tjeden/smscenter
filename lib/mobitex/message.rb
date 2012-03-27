@@ -93,6 +93,14 @@ module Mobitex
       body ? body.length + body.count(DOUBLE_CHARACTERS) : 0
     end
 
+    def type(*value)
+      if value.first
+        self.type = value.first
+      else
+        @type ||= length > MAX_LENGTH['sms'] ? 'concat' : 'sms'
+      end
+    end
+
     # Validation #######################################################################################################
 
     def errors
@@ -127,6 +135,16 @@ module Mobitex
 
     def message_id_valid?
       !(message_id.to_s !~ MESSAGE_ID_REGEXP)
+    end
+
+    # Sanitization #####################################################################################################
+
+    def sanitize!
+      if from.is_a?(Numeric) || from =~ /^\d+$/
+        self.from = from.to_s[0...16]
+      else
+        self.from = from.to_s.gsub(/[^a-zA-Z0-9]/, '')[0...11]
+      end
     end
 
     # Delivery #########################################################################################################

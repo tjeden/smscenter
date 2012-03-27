@@ -4,7 +4,7 @@ require 'mobitex/message'
 module Mobitex
 
   def self.new(*args, &block)
-    Mobitex::Message.new(args, &block)
+    Mobitex::Message.new(*args, &block)
   end
 
   def self.configure(&block)
@@ -22,7 +22,7 @@ module Mobitex
   end
 
   def self.deliver(*args, &block)
-    message = self.new(args, &block)
+    message = self.new(*args, &block)
     message.deliver
     message
   end

@@ -14,6 +14,8 @@ module Mobitex
     attr_accessor :settings
 
     def deliver!(message)
+      message.sanitize!
+
       raw_response = connection.post('/send.php', {
           :user   => settings[:user],
           :pass   => settings[:pass],
