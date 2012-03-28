@@ -1,21 +1,59 @@
-require 'net/http'
-
-require 'mobitex/connection'
-require 'mobitex/errors'
-require 'mobitex/outbox'
-require 'mobitex/version'
-require 'mobitex/test_helpers'
+require 'mobitex/configuration'
+require 'mobitex/message'
+require 'mobitex/response'
+require 'mobitex/status'
 
 module Mobitex
-  DEFAULT_SITE = 'http://api.statsms.net'.freeze
 
-  # API address
-  @@site = DEFAULT_SITE unless defined? @@site
-  def self.site; @@site; end
-  def self.site=(site); @@site = site; end
+  def self.new(*args, &block)
+    Mobitex::Message.new(*args, &block)
+  end
 
-  def self.configure
-    yield self
+  # Public: Configure global options.
+  #
+  # Examples
+  #
+  #   Mobitex.configure do
+  #     delivery_method :http, {
+  #       :user => 'connectmed',
+  #       :pass => '56asd4Fgi'
+  #     }
+  #   end
+  #
+  def self.configure(&block)
+    return unless block_given?
+
+    if block.arity == 1
+      yield Configuration.instance
+    else
+      Configuration.instance.instance_eval &block
+    end
+  end
+
+  def self.delivery_method
+    Configuration.instance.delivery_method
+  end
+
+  def self.deliver(*args, &block)
+    message = self.new(*args, &block)
+    message.deliver
+    message
+  end
+
+  def self.register_observer(observer)
+    unless @@delivery_notification_observers.include?(observer)
+      @@delivery_notification_observers << observer
+    end
+  end
+
+  private
+
+  @@delivery_notification_observers = []
+
+  def self.inform_observers(message)
+    @@delivery_notification_observers.each do |observer|
+      observer.delivered_message(message)
+    end
   end
 
 end

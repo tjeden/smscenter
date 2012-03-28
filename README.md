@@ -20,64 +20,111 @@ gem 'mobitex'
 Code:
 
 ``` ruby
-outbox = Mobitex::Outbox.new('username', 'password')
-outbox.deliver_sms('48500500500', 'you have got mail')
+outbox = Mobitex::Outbox.new(:api_user => 'username', :api_pass => 'password')
+outbox.deliver('48123456789', 'Spam bacon sausage and spam')
 ```
 
 Enjoy!
 
+More usage examples
+-------------------
+
+### Global configuration
+
+You can set up global configuration:
+
+``` ruby
+Mobitex.configure do |config|
+  config.api_user = 'username'
+  config.api_pass = 'password'
+end
+```
+
+Then you can just:
+
+``` ruby
+Mobitex.deliver('48123456789', 'Egg sausage and bacon')
+```
+
+...which really is a shortcut for:
+
+``` ruby
+Mobitex::Outbox.new.deliver('48123456789', 'Egg sausage and bacon')
+```
+
+### Multiple Outboxes
+
+``` ruby
+Mobitex.configure do |config|
+  config.api_user     = 'user1'
+  config.api_pass     = 'pass2'
+  config.message_from = 'FullService'
+end
+```
+
+You can have multiple simultaneous clients:
+
+``` ruby
+outbox1 = Mobitex::Outbox.new                                             # Credentials and delivery options taken from global config
+outbox2 = Mobitex::Outbox.new(:message_from => 'SpamHouse')               # Custom "message_from" option, credentials from global config
+outbox3 = Mobitex::Outbox.new(:api_user => 'user3', :api_pass => 'pass3') # Custom credentials, "message_from" option from global config
+
+outbox1.deliver('48123456789', 'Hello from FullService!')
+outbox2.deliver('48123456789', 'SpamHouse welcomes you!')
+outbox3.deliver('48123456789', 'Other API client will be charged here')
+```
+
 How to test it?
 ---------------
 
-Currently Mobitex supports only `test/unit` with webmock/test\_unit
+Currently Mobitex supports `minitest`, `test/unit` and `rspec` and requires `webmock`.
 
-Include `Mobitex::TestHelpers` in you test class and use `assert_sms_send`
+Require appropriate library for your testing framework:
 
 ``` ruby
-class SomeTest < Test::Unit::TestCase
-  include Mobitex::TestHelpers
+require 'mobitex/minitest'
+require 'mobitex/test_unit'
+require 'mobitex/rspec'
+```
 
-  def test_sms_delivery
-    outbox = Mobitex::Outbox.new('faked', 'faked')
-    outbox.deliver_sms('48123456789', 'you have got mail')
+Then use `assert_delivered`:
 
-    assert_sms_send('you have got mail')
+``` ruby
+describe 'Dispatcher' do
+
+  before do
+    WebMock.reset!
+    WebMock.disable_net_connect!
   end
+
+  it 'delivers short text message' do
+    outbox = Mobitex::Outbox.new(:api_user => 'faked', :api_pass => 'faked')
+    assert_delivered 'I want to play a game' do
+      outbox.deliver('48123456789', 'Spam bacon spam tomato and spam')
+    end
+  end
+
 end
-``` 
-    
-`assert_sms_send` has few options:
+```
+
+`assert_delivered` has a few options:
 
 ``` ruby
 # It can check custom number
-assert_sms_send('some text', :number => '48666666666')
-# It can check if long sms has been send (more than 160 chars)
-assert_sms_send('some long text', :type => 'concat')
-``` 
-    
-Custom setup in tests
----------------------
+assert_delivered('some text', :number => '48666666666') do ...
 
-If you use custom setup in your tests don't forget to initialize web\_mock in `setup`:
+# It can check if long sms has been send (more than 160 chars)
+assert_delivered('some long text', :type => 'concat') do ...
+```
+
+Setup tests
+-----------
+
+Don't forget to initialize web\_mock in your `before`/`setup` step:
 
 ``` ruby
 def setup
   WebMock.reset!
   WebMock.disable_net_connect!
-  stub_request(:post, "http://api.statsms.net/send.php").
-    with( :headers => {'Accept'=>'*/*'}).
-    to_return(:status => 200, :body => "Status: 002, Id: 03a72a49fb9595f3737bc4a2519ff283, Number: 4860X123456", :headers => {})
 end
-``` 
-
-Or you can just run super in `setup` method, it will stub requests and prepare web\_mock.
-   
-``` ruby
-def setup
-  # some your code goes here
-  super
-end
-``` 
-
-
-
+```
