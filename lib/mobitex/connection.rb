@@ -1,14 +1,15 @@
+require 'net/http'
+require 'mobitex/connection_errors'
+
 module Mobitex
 
   class Connection
-    attr_reader :site, :user, :pass
+    attr_reader :endpoint
 
-    def initialize(site, user = nil, pass = nil)
-      raise ArgumentError, 'Missing site URI' unless site
+    def initialize(endpoint)
+      raise ArgumentError, 'Missing endpoint URI' unless endpoint
 
-      self.site = site
-      self.user = user
-      self.pass = pass
+      self.endpoint = endpoint
     end
 
     # Executes a GET request.
@@ -25,16 +26,13 @@ module Mobitex
 
     private
 
-    attr_writer :user, :pass
-
     # Set URI for remote service.
-    def site=(site)
-      @site = site.is_a?(URI) ? site : URI.parse(site)
+    def endpoint=(endpoint)
+      @endpoint = endpoint.is_a?(URI) ? endpoint : URI.parse(endpoint)
     end
 
     # Makes a request to the remote service.
     def request(method, path, params = {})
-      params = {:user => user, :pass => pass}.merge(params)
       response = http.send(method, path, query(params))
       handle_response(response)
     rescue Timeout::Error => e
@@ -63,7 +61,7 @@ module Mobitex
     end
 
     def new_http
-      Net::HTTP.new(@site.host, @site.port)
+      Net::HTTP.new(@endpoint.host, @endpoint.port)
     end
 
     def configure_http(http)
