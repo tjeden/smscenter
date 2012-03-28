@@ -12,7 +12,7 @@ module Mobitex
     end
 
     def initialize(values)
-      @settings = {}.merge!(values)
+      @settings = {}
     end
 
     def deliver!(message)
